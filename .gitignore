@@ -1,0 +1,33 @@
+# Build
+build/
+bin/
+Debug/
+Release/
+x64/
+x86/
+
+# Visual Studio
+.vs/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Object files
+*.o
+*.obj
+
+# Executable
+*.exe
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
