@@ -114,6 +114,8 @@ void drawMuseumBuilding() {
     }
 }
 
+// ==================== PATUNG CR7 ====================
+
 void drawCR7Statue() {
     // Body
     glPushMatrix();
@@ -170,62 +172,104 @@ void drawCR7Statue() {
 void drawCR7CelebrationPose() {
     // Body
     glPushMatrix();
-    glTranslatef(0, 1.2f, 0);
-    glScalef(0.5f, 2, 0.5f);
+    glTranslatef(0, 1.8f, 0);
+    glScalef(0.5f, 2.4f, 0.4f);
     bindTexture(TEXTURE_BRONZE);
-    drawCylinder(0.5f, 1, 16);
+    drawCube(1, 1, 1);
     glPopMatrix();
     
     // Head
     glPushMatrix();
-    glTranslatef(0, 2.8f, 0);
+    glTranslatef(0, 3.2f, 0);
     bindTexture(TEXTURE_BRONZE);
-    drawSphere(0.4f, 16, 16);
+    drawSphere(0.4f, 20, 20);
+    glPopMatrix();
+    
+    // Hair
+    glPushMatrix();
+    glTranslatef(0, 3.3f, 0);
+    glScalef(0.35f, 0.06f, 0.4f);
+    bindTexture(TEXTURE_WALL);
+    drawCube(1, 1, 1);
     glPopMatrix();
     
     // Right arm (raised - SIUUU pose)
     glPushMatrix();
-    glTranslatef(0.5f, 2.2f, 0);
-    glRotatef(-45, 0, 0, 1);
-    glRotatef(20, 0, 1, 0);
-    glScalef(0.08f, 0.8f, 0.08f);
+    glTranslatef(0.5f, 2.8f, 0);
+    glRotatef(-60, 0, 0, 1);
+    glRotatef(15, 0, 1, 0);
+    glScalef(0.08f, 0.9f, 0.08f);
     bindTexture(TEXTURE_BRONZE);
     drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
+    // Right fist
+    glPushMatrix();
+    glTranslatef(0.9f, 3.4f, 0.1f);
+    glScalef(0.08f, 0.08f, 0.08f);
+    bindTexture(TEXTURE_BRONZE);
+    drawSphere(0.5f, 8, 8);
+    glPopMatrix();
+    
     // Left arm
     glPushMatrix();
-    glTranslatef(-0.5f, 1.8f, 0);
+    glTranslatef(-0.5f, 2.4f, 0);
     glRotatef(30, 0, 0, 1);
-    glScalef(0.08f, 0.6f, 0.08f);
+    glRotatef(-10, 0, 1, 0);
+    glScalef(0.08f, 0.7f, 0.08f);
     bindTexture(TEXTURE_BRONZE);
     drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
     // Right leg
     glPushMatrix();
-    glTranslatef(0.25f, 0.2f, 0.2f);
-    glScalef(0.1f, 0.8f, 0.1f);
+    glTranslatef(0.25f, 0.3f, 0.15f);
+    glScalef(0.1f, 1.0f, 0.1f);
     bindTexture(TEXTURE_BRONZE);
     drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
     // Left leg
     glPushMatrix();
-    glTranslatef(-0.25f, 0.2f, -0.2f);
-    glScalef(0.1f, 0.8f, 0.1f);
+    glTranslatef(-0.25f, 0.3f, -0.15f);
+    glScalef(0.1f, 1.0f, 0.1f);
     bindTexture(TEXTURE_BRONZE);
     drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
+    // Shoes
+    glPushMatrix();
+    glTranslatef(0.25f, 0.05f, 0.2f);
+    glScalef(0.15f, 0.05f, 0.15f);
+    bindTexture(TEXTURE_BALL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(-0.25f, 0.05f, -0.2f);
+    glScalef(0.15f, 0.05f, 0.15f);
+    bindTexture(TEXTURE_BALL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
     // Base
     glPushMatrix();
-    glTranslatef(0, -0.2f, 0);
-    glScalef(1.2f, 0.15f, 1.2f);
+    glTranslatef(0, -0.1f, 0);
+    glScalef(1.2f, 0.1f, 1.0f);
     bindTexture(TEXTURE_MARBLE);
     drawCube(1, 1, 1);
     glPopMatrix();
+    
+    // Plaque
+    glPushMatrix();
+    glTranslatef(0, -0.2f, 0.7f);
+    glScalef(0.7f, 0.05f, 0.02f);
+    bindTexture(TEXTURE_GOLD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
 }
+
+// ==================== TROFI ====================
 
 void drawTrophy(float scale) {
     glPushMatrix();
@@ -267,9 +311,9 @@ void drawTrophy(float scale) {
 
 void drawBallonDor() {
     glPushMatrix();
-    glScalef(0.8f, 0.8f, 0.8f);
+    glScalef(0.7f, 0.7f, 0.7f);
     
-    // Base
+    // Base with year
     glPushMatrix();
     glTranslatef(0, 0, 0);
     bindTexture(TEXTURE_GOLD);
@@ -290,7 +334,7 @@ void drawBallonDor() {
     drawSphere(0.3f, 16, 16);
     glPopMatrix();
     
-    // Star on ball
+    // Star decoration
     glPushMatrix();
     glTranslatef(0, 0.9f, 0.3f);
     glScalef(0.05f, 0.05f, 0.05f);
@@ -303,7 +347,7 @@ void drawBallonDor() {
 
 void drawGoldenBoot() {
     glPushMatrix();
-    glScalef(0.8f, 0.8f, 0.8f);
+    glScalef(0.7f, 0.7f, 0.7f);
     
     // Base
     glPushMatrix();
@@ -333,7 +377,7 @@ void drawGoldenBoot() {
 
 void drawUCLTrophy() {
     glPushMatrix();
-    glScalef(0.7f, 0.7f, 0.7f);
+    glScalef(0.6f, 0.6f, 0.6f);
     
     // Base
     glPushMatrix();
@@ -349,14 +393,14 @@ void drawUCLTrophy() {
     drawCylinder(0.08f, 0.8f, 8);
     glPopMatrix();
     
-    // Cup
+    // Cup (Big Ears)
     glPushMatrix();
     glTranslatef(0, 1.0f, 0);
     bindTexture(TEXTURE_GOLD);
     drawCylinder(0.35f, 0.5f, 16);
     glPopMatrix();
     
-    // Handles (Big Ears)
+    // Big Ears handles
     for (int i = 0; i < 2; i++) {
         glPushMatrix();
         glTranslatef((i == 0 ? 0.5f : -0.5f), 0.8f, 0);
@@ -368,6 +412,8 @@ void drawUCLTrophy() {
     
     glPopMatrix();
 }
+
+// ==================== OBJEK INTERIOR ====================
 
 void drawJersey(float w, float h) {
     glPushMatrix();
@@ -385,14 +431,14 @@ void drawPillar(float radius, float height) {
     drawCylinder(radius + 0.1f, 0.2f, 16);
     glPopMatrix();
     
-    // Pillar
+    // Pillar body
     glPushMatrix();
     glTranslatef(0, height/2, 0);
     bindTexture(TEXTURE_MARBLE);
     drawCylinder(radius, height - 0.4f, 16);
     glPopMatrix();
     
-    // Capital (top)
+    // Capital (top decoration)
     glPushMatrix();
     glTranslatef(0, height - 0.1f, 0);
     bindTexture(TEXTURE_GOLD);
@@ -426,7 +472,7 @@ void drawWalls(float width, float height, float depth) {
     drawWall(0.2f, height, depth);
     glPopMatrix();
     
-    // Front wall (with entrance)
+    // Front wall (with entrance area)
     glPushMatrix();
     glTranslatef(0, height/2, depth/2);
     drawWall(width, height, 0.2f);
@@ -520,7 +566,7 @@ void drawChandelier() {
     // Main rod
     glPushMatrix();
     glTranslatef(0, -0.5f, 0);
-    glScalef(0.05f, 0.5f, 0.05f);
+    glScalef(0.04f, 0.6f, 0.04f);
     bindTexture(TEXTURE_GOLD);
     drawCylinder(0.5f, 1, 8);
     glPopMatrix();
@@ -528,38 +574,64 @@ void drawChandelier() {
     // Main ring
     glPushMatrix();
     glTranslatef(0, -0.8f, 0);
-    glScalef(0.8f, 0.05f, 0.8f);
+    glScalef(1.2f, 0.05f, 1.2f);
     bindTexture(TEXTURE_GOLD);
-    drawTorus(0.05f, 0.5f, 8, 8);
+    drawTorus(0.04f, 0.6f, 12, 12);
     glPopMatrix();
     
-    // Small lamps
+    // Second ring
+    glPushMatrix();
+    glTranslatef(0, -1.0f, 0);
+    glScalef(0.8f, 0.04f, 0.8f);
+    bindTexture(TEXTURE_GOLD);
+    drawTorus(0.03f, 0.4f, 12, 12);
+    glPopMatrix();
+    
+    // Lamps
     for (int i = 0; i < 8; i++) {
         float angle = i * 45.0f * 3.14159f / 180.0f;
-        float x = cos(angle) * 0.7f;
-        float z = sin(angle) * 0.7f;
+        float x = cos(angle) * 0.9f;
+        float z = sin(angle) * 0.9f;
         
+        // Chain
         glPushMatrix();
-        glTranslatef(x, -0.9f, z);
-        glScalef(0.1f, 0.15f, 0.1f);
-        glColor4f(1.0f, 0.9f, 0.6f, 0.9f);
-        drawSphere(0.5f, 6, 6);
+        glTranslatef(x, -0.7f, z);
+        glScalef(0.02f, 0.3f, 0.02f);
+        bindTexture(TEXTURE_GOLD);
+        drawCube(1, 1, 1);
+        glPopMatrix();
+        
+        // Lamp
+        glPushMatrix();
+        glTranslatef(x, -1.1f, z);
+        glScalef(0.15f, 0.2f, 0.15f);
+        glColor4f(1.0f, 0.9f, 0.5f, 0.9f);
+        drawSphere(0.5f, 8, 8);
         glColor4f(1, 1, 1, 1);
         glPopMatrix();
     }
+    
+    // Center lamp
+    glPushMatrix();
+    glTranslatef(0, -1.1f, 0);
+    glScalef(0.2f, 0.25f, 0.2f);
+    glColor4f(1.0f, 0.8f, 0.4f, 0.9f);
+    drawSphere(0.5f, 8, 8);
+    glColor4f(1, 1, 1, 1);
+    glPopMatrix();
 }
 
 // ==================== OBJEK INTERIOR BARU ====================
 
 void drawSectionPanel(const char* text, float w, float h) {
-    // Panel dengan background dan border emas
+    // Panel background
     glPushMatrix();
     glScalef(w, h, 0.05f);
     bindTexture(TEXTURE_PANEL);
     drawCube(1, 1, 1);
     glPopMatrix();
     
-    // Border emas
+    // Gold border
     glPushMatrix();
     glTranslatef(0, 0, 0.03f);
     glScalef(w + 0.1f, h + 0.1f, 0.01f);
@@ -569,7 +641,7 @@ void drawSectionPanel(const char* text, float w, float h) {
 }
 
 void drawChildhoodRoom() {
-    // Small bed
+    // Bed
     glPushMatrix();
     glTranslatef(0, 0.2f, 0);
     glScalef(0.8f, 0.1f, 0.5f);
@@ -592,25 +664,10 @@ void drawChildhoodRoom() {
     bindTexture(TEXTURE_WOOD);
     drawCube(1, 1, 1);
     glPopMatrix();
-    
-    // Table legs
-    glPushMatrix();
-    glTranslatef(0.45f, -0.05f, 0.35f);
-    glScalef(0.02f, 0.1f, 0.02f);
-    bindTexture(TEXTURE_METAL);
-    drawCube(1, 1, 1);
-    glPopMatrix();
-    
-    glPushMatrix();
-    glTranslatef(0.55f, -0.05f, 0.25f);
-    glScalef(0.02f, 0.1f, 0.02f);
-    bindTexture(TEXTURE_METAL);
-    drawCube(1, 1, 1);
-    glPopMatrix();
 }
 
 void drawFirstBoots() {
-    // First boots (small)
+    // First boots
     glPushMatrix();
     glTranslatef(-0.2f, 0.05f, 0);
     glScalef(0.08f, 0.05f, 0.15f);
@@ -624,42 +681,25 @@ void drawFirstBoots() {
     bindTexture(TEXTURE_BALL);
     drawCube(1, 1, 1);
     glPopMatrix();
-    
-    // Label
-    glPushMatrix();
-    glTranslatef(0, 0.15f, 0);
-    glScalef(0.3f, 0.02f, 0.01f);
-    bindTexture(TEXTURE_BANNER);
-    drawCube(1, 1, 1);
-    glPopMatrix();
 }
 
 void drawHatTrickBall() {
-    // Ball with hat-trick marking
     glPushMatrix();
     glScalef(0.3f, 0.3f, 0.3f);
     bindTexture(TEXTURE_BALL);
     drawSphere(0.5f, 12, 12);
     glPopMatrix();
-    
-    // Small number
-    glPushMatrix();
-    glTranslatef(0, 0.2f, 0.3f);
-    glScalef(0.02f, 0.02f, 0.01f);
-    bindTexture(TEXTURE_GOLD);
-    drawCube(1, 1, 1);
-    glPopMatrix();
 }
 
 void drawMomentPhoto() {
-    // Photo frame
+    // Photo
     glPushMatrix();
     glScalef(0.7f, 0.9f, 0.02f);
     bindTexture(TEXTURE_PHOTO);
     drawCube(1, 1, 1);
     glPopMatrix();
     
-    // Frame border
+    // Gold frame
     glPushMatrix();
     glTranslatef(0, 0, 0.01f);
     glScalef(0.75f, 0.95f, 0.01f);
@@ -669,7 +709,7 @@ void drawMomentPhoto() {
 }
 
 void drawInteractiveZone() {
-    // Interactive screen
+    // Screen
     glPushMatrix();
     glScalef(1.5f, 1.0f, 0.05f);
     bindTexture(TEXTURE_GLASS);
@@ -694,7 +734,7 @@ void drawInteractiveZone() {
 }
 
 void drawYouTubeStudio() {
-    // Studio desk
+    // Desk
     glPushMatrix();
     glTranslatef(0, 0.4f, 0);
     glScalef(1.0f, 0.05f, 0.6f);
@@ -717,18 +757,10 @@ void drawYouTubeStudio() {
     bindTexture(TEXTURE_MARBLE);
     drawCube(1, 1, 1);
     glPopMatrix();
-    
-    // Chair back
-    glPushMatrix();
-    glTranslatef(0, 0.3f, -0.2f);
-    glScalef(0.4f, 0.4f, 0.02f);
-    bindTexture(TEXTURE_MARBLE);
-    drawCube(1, 1, 1);
-    glPopMatrix();
 }
 
 void drawSouvenirShop() {
-    // Shop counter
+    // Counter
     glPushMatrix();
     glTranslatef(0, 0.4f, 0);
     glScalef(1.2f, 0.3f, 0.5f);
@@ -736,7 +768,7 @@ void drawSouvenirShop() {
     drawCube(1, 1, 1);
     glPopMatrix();
     
-    // Display shelves
+    // Shelves
     for (int i = -1; i <= 1; i++) {
         glPushMatrix();
         glTranslatef(i * 0.5f, 0.7f, 0);
@@ -746,7 +778,7 @@ void drawSouvenirShop() {
         glPopMatrix();
     }
     
-    // Small jerseys on display
+    // Mini jerseys
     for (int i = -1; i <= 1; i++) {
         glPushMatrix();
         glTranslatef(i * 0.5f, 0.8f, 0.1f);
@@ -760,66 +792,70 @@ void drawSouvenirShop() {
 void drawWaxFigure() {
     // Body
     glPushMatrix();
-    glTranslatef(0, 1.2f, 0);
-    glScalef(0.5f, 2.0f, 0.5f);
+    glTranslatef(0, 1.5f, 0);
+    glScalef(0.5f, 2.2f, 0.4f);
     bindTexture(TEXTURE_BRONZE);
-    drawCylinder(0.5f, 1, 16);
+    drawCube(1, 1, 1);
     glPopMatrix();
     
     // Head
     glPushMatrix();
-    glTranslatef(0, 2.6f, 0);
+    glTranslatef(0, 2.8f, 0);
     bindTexture(TEXTURE_BRONZE);
-    drawSphere(0.4f, 16, 16);
+    drawSphere(0.35f, 20, 20);
     glPopMatrix();
     
     // Hair
     glPushMatrix();
-    glTranslatef(0, 2.7f, 0);
-    glScalef(0.4f, 0.1f, 0.4f);
+    glTranslatef(0, 2.9f, 0);
+    glScalef(0.3f, 0.06f, 0.35f);
     bindTexture(TEXTURE_WALL);
     drawCube(1, 1, 1);
     glPopMatrix();
     
     // Arms
     glPushMatrix();
-    glTranslatef(0.6f, 2.0f, 0);
-    glRotatef(-20, 0, 0, 1);
+    glTranslatef(0.5f, 2.2f, 0);
+    glRotatef(-30, 0, 0, 1);
+    glScalef(0.08f, 0.8f, 0.08f);
     bindTexture(TEXTURE_BRONZE);
-    drawCylinder(0.08f, 0.7f, 8);
+    drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
     glPushMatrix();
-    glTranslatef(-0.6f, 2.0f, 0);
+    glTranslatef(-0.5f, 2.2f, 0);
     glRotatef(20, 0, 0, 1);
+    glScalef(0.08f, 0.8f, 0.08f);
     bindTexture(TEXTURE_BRONZE);
-    drawCylinder(0.08f, 0.7f, 8);
+    drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
     // Legs
     glPushMatrix();
-    glTranslatef(0.25f, 0.2f, 0);
+    glTranslatef(0.2f, 0.3f, 0);
+    glScalef(0.1f, 0.9f, 0.1f);
     bindTexture(TEXTURE_BRONZE);
-    drawCylinder(0.12f, 0.8f, 8);
+    drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
     glPushMatrix();
-    glTranslatef(-0.25f, 0.2f, 0);
+    glTranslatef(-0.2f, 0.3f, 0);
+    glScalef(0.1f, 0.9f, 0.1f);
     bindTexture(TEXTURE_BRONZE);
-    drawCylinder(0.12f, 0.8f, 8);
+    drawCylinder(0.5f, 1, 8);
     glPopMatrix();
     
     // Base
     glPushMatrix();
     glTranslatef(0, -0.1f, 0);
-    glScalef(0.8f, 0.1f, 0.8f);
+    glScalef(0.9f, 0.08f, 0.9f);
     bindTexture(TEXTURE_MARBLE);
     drawCube(1, 1, 1);
     glPopMatrix();
 }
 
 void drawTimelinePanel(const char* year) {
-    // Panel background
+    // Panel
     glPushMatrix();
     glScalef(0.6f, 0.5f, 0.05f);
     bindTexture(TEXTURE_TIMELINE);
@@ -832,5 +868,40 @@ void drawTimelinePanel(const char* year) {
     glScalef(0.65f, 0.55f, 0.01f);
     bindTexture(TEXTURE_GOLD);
     drawCube(1, 1, 1);
+    glPopMatrix();
+}
+// objects.cpp - Tambahkan fungsi ini di bagian setelah drawTree
+
+void drawPalmTree(float height) {
+    // Batang (melengkung)
+    glPushMatrix();
+    glTranslatef(0, height/2, 0);
+    glScalef(0.12f, height, 0.12f);
+    glColor4f(0.5f, 0.35f, 0.15f, 1.0f);
+    drawCylinder(0.5f, 1, 8);
+    glColor4f(1, 1, 1, 1);
+    glPopMatrix();
+    
+    // Daun palem (5 daun)
+    for (int i = 0; i < 5; i++) {
+        float angle = i * 72.0f * 3.14159f / 180.0f;
+        glPushMatrix();
+        glTranslatef(0, height, 0);
+        glRotatef(30, 1, 0, 0);
+        glRotatef(angle * 180.0f / 3.14159f, 0, 1, 0);
+        glScalef(0.02f, 0.8f, 0.8f);
+        glColor4f(0.1f, 0.5f, 0.1f, 1.0f);
+        drawCube(1, 1, 1);
+        glColor4f(1, 1, 1, 1);
+        glPopMatrix();
+    }
+    
+    // Buah kelapa (opsional)
+    glPushMatrix();
+    glTranslatef(0, height - 0.1f, 0);
+    glScalef(0.1f, 0.1f, 0.1f);
+    glColor4f(0.4f, 0.3f, 0.1f, 1.0f);
+    drawSphere(0.5f, 6, 6);
+    glColor4f(1, 1, 1, 1);
     glPopMatrix();
 }

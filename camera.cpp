@@ -142,16 +142,18 @@ void rotateCamera(float dx, float dy) {
     updateCamera(0);
 }
 
+// camera.cpp - Bagian resetCamera
 void resetCamera() {
+    // Posisi awal di luar museum (depan museum)
     camera.eyeX = 0.0f;
     camera.eyeY = 2.0f;
-    camera.eyeZ = 15.0f;
+    camera.eyeZ = 18.0f;  // Jarak dari museum
     camera.centerX = 0.0f;
     camera.centerY = 1.0f;
     camera.centerZ = 0.0f;
     camera.yaw = 0.0f;
     camera.pitch = 0.0f;
-    camera.radius = 15.0f;
+    camera.radius = 18.0f;
     updateCamera(0);
 }
 

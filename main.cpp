@@ -22,7 +22,7 @@ const int WINDOW_HEIGHT = 768;
 const char* WINDOW_TITLE = "Museum Virtual 3D CR7 - Madeira";
 
 // ==================== VARIABEL GLOBAL ====================
-int currentScene = 0;        // 0: Exterior, 1: Interior
+int currentScene = 1;        // 0: Exterior, 1: Interior
 bool isRunning = true;
 bool isPaused = false;
 float deltaTime = 0.016f;

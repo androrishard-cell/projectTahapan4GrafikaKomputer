@@ -23,8 +23,10 @@ extern void drawUCLTrophy();
 extern void drawJersey(float w, float h);
 extern void drawPillar(float radius, float height);
 extern void drawWall(float w, float h, float d);
+extern void drawWalls(float width, float height, float depth);
 extern void drawFloor(float w, float d);
 extern void drawTree(float trunkHeight, float crownRadius);
+extern void drawPalmTree(float height);  // TAMBAHKAN
 extern void drawBanner(float w, float h);
 extern void drawGardenLamp();
 extern void drawBench();
@@ -41,6 +43,5 @@ extern void drawYouTubeStudio();
 extern void drawSouvenirShop();
 extern void drawWaxFigure();
 extern void drawTimelinePanel(const char* year);
-extern void drawWalls(float width, float height, float depth);
 
 #endif
