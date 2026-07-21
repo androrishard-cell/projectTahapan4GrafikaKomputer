@@ -55,10 +55,8 @@ void initGL() {
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     
-    // Setup viewport
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     
-    // Inisialisasi komponen
     initTextures();
     initLighting();
     initCamera();
@@ -79,23 +77,16 @@ void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     
-    // Setup kamera
     setupCamera();
-    
-    // Setup pencahayaan
     setupLighting();
     
-    // Render berdasarkan scene
     if (currentScene == 0) {
         renderExterior();
     } else {
         renderInterior();
     }
     
-    // Render animasi
     renderAnimations();
-    
-    // Render interaksi & HUD
     renderHUD();
     renderMenu();
     
@@ -119,7 +110,6 @@ void renderHUD() {
     // Background HUD
     glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
     glBegin(GL_QUADS);
-    // Top bar
     glVertex2f(0, WINDOW_HEIGHT - 70);
     glVertex2f(WINDOW_WIDTH, WINDOW_HEIGHT - 70);
     glVertex2f(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -142,13 +132,13 @@ void renderHUD() {
     glColor3f(0.5f, 1.0f, 0.5f);
     glRasterPos2f(20, WINDOW_HEIGHT - 55);
     std::string cam = "Camera: " + getCameraModeString();
-    for (char c : cam) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+    for (char c : cam) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
     
     // Night mode status
     glColor3f(0.8f, 0.8f, 1.0f);
     glRasterPos2f(WINDOW_WIDTH - 180, WINDOW_HEIGHT - 55);
     std::string night = "Night Mode: " + std::string(getNightModeStatus() ? "ON" : "OFF");
-    for (char c : night) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+    for (char c : night) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
     
     // FPS
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -161,7 +151,7 @@ void renderHUD() {
         glColor3f(1.0f, 0.2f, 0.2f);
         glRasterPos2f(WINDOW_WIDTH/2 - 50, WINDOW_HEIGHT/2);
         std::string pause = "PAUSED";
-        for (char c : pause) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_24, c);
+        for (char c : pause) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Ganti 24 jadi 18
     }
     
     glEnable(GL_LIGHTING);
@@ -174,7 +164,6 @@ void renderHUD() {
 }
 
 void renderMenu() {
-    // Menu sederhana di pojok kiri bawah
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -186,7 +175,6 @@ void renderMenu() {
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     
-    // Background menu
     glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
     glBegin(GL_QUADS);
     glVertex2f(10, 10);
@@ -195,7 +183,6 @@ void renderMenu() {
     glVertex2f(10, 110);
     glEnd();
     
-    // Kontrol
     glColor3f(0.8f, 0.8f, 0.8f);
     glRasterPos2f(15, 95);
     std::string controls = "CONTROLS:";
@@ -232,16 +219,9 @@ void renderMenu() {
 void updateScene() {
     if (isPaused) return;
     
-    // Update animasi
     updateAnimations(deltaTime);
-    
-    // Update interaksi
     updateInteractions(deltaTime);
-    
-    // Update camera
     updateCamera(deltaTime);
-    
-    // Update lighting
     updateLighting(deltaTime);
 }
 
@@ -253,7 +233,6 @@ void timer(int value) {
     if (deltaTime > 0.05f) deltaTime = 0.05f;
     lastTime = currentTime;
     
-    // FPS counter
     frameCount++;
     fpsTimer += deltaTime;
     if (fpsTimer >= 1.0f) {
@@ -267,9 +246,7 @@ void timer(int value) {
     glutTimerFunc(16, timer, 0);
 }
 
-void idle() {
-    // Nothing to do here, timer handles updates
-}
+void idle() {}
 
 // ==================== CALLBACK FUNGSI ====================
 
@@ -288,10 +265,8 @@ void keyboard(unsigned char key, int x, int y) {
         case 27: // ESC
             if (isPaused) {
                 isPaused = false;
-                glutSetCursor(GLUT_CURSOR_INHERIT);
             } else {
                 isPaused = true;
-                glutSetCursor(GLUT_CURSOR_FULL_CROSSHAIR);
             }
             break;
             
@@ -344,26 +319,23 @@ void keyboard(unsigned char key, int x, int y) {
             
         case 'f':
         case 'F':
-            glutFullScreenToggle();
+            glutFullScreen();  // Ganti glutFullScreenToggle dengan glutFullScreen
             break;
             
-        case 'w': case 'W':
+        case 'w':
             moveCamera(FORWARD, deltaTime);
             break;
             
-        case 's': case 'S':
+        case 's':
             moveCamera(BACKWARD, deltaTime);
-            break;
-            
-        case 'a':
-            moveCamera(LEFT, deltaTime);
             break;
             
         case 'd':
             moveCamera(RIGHT, deltaTime);
             break;
             
-        case 'q': case 'Q':
+        case 'q':
+        case 'Q':
             if (currentScene == 1) {
                 currentScene = 0;
                 std::cout << "Exiting Museum..." << std::endl;
@@ -398,7 +370,7 @@ void specialKeys(int key, int x, int y) {
             break;
             
         case GLUT_KEY_F11:
-            glutFullScreenToggle();
+            glutFullScreen();  // Ganti glutFullScreenToggle dengan glutFullScreen
             break;
             
         case GLUT_KEY_UP:

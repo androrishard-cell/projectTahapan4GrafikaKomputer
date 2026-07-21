@@ -3,13 +3,12 @@
 #define CAMERA_H
 
 #include <GL/glut.h>
-#include <math.h>
+#include <string>
 
 #define CAM_FIRST_PERSON 0
 #define CAM_ORBIT 1
 #define CAM_FREE_FLY 2
 
-// Movement directions
 #define FORWARD 0
 #define BACKWARD 1
 #define LEFT 2

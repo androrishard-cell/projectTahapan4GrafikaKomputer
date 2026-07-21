@@ -219,11 +219,6 @@ void toggleAutoTour() {
     std::cout << "Auto Tour: " << (anim.isAutoTour ? "ON" : "OFF") << std::endl;
 }
 
-void toggleNightMode() {
-    anim.isNightMode = !anim.isNightMode;
-    std::cout << "Night Mode: " << (anim.isNightMode ? "ON" : "OFF") << std::endl;
-}
-
 void triggerCelebration() {
     anim.celebrationTimer = 3.0f;
     for (auto& p : celebrationParticles) {
@@ -239,6 +234,8 @@ void triggerCelebration() {
 }
 
 bool getAutoTourStatus() { return anim.isAutoTour; }
-bool getNightModeStatus() { return anim.isNightMode; }
 float getTrophyRotation() { return anim.trophyRotation; }
 float getBallRotation() { return anim.ballRotation; }
+float getStatueAngle() {
+    return anim.statueAngle;
+}

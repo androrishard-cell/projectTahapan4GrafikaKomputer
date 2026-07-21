@@ -4,6 +4,7 @@
 #include "animations.h"
 #include <iostream>
 #include <cmath>
+#include <cstring>
 
 static std::vector<GameObject> gameObjects;
 static bool helpVisible = false;
@@ -59,7 +60,6 @@ void checkCollisions(float* x, float* y, float* z) {
             playerBox.minY < box.maxY && playerBox.maxY > box.minY &&
             playerBox.minZ < box.maxZ && playerBox.maxZ > box.minZ) {
             
-            // Push player out
             float overlapX = 0, overlapZ = 0;
             
             if (playerBox.maxX > box.minX && playerBox.maxX < box.maxX) {
@@ -90,7 +90,6 @@ void handleMouseClick(int button, int state, int x, int y) {
                 std::cout << "Click at: " << x << ", " << y << std::endl;
                 break;
             case GLUT_RIGHT_BUTTON:
-                // Switch camera mode
                 int mode = getCurrentCameraMode();
                 setCameraMode((mode + 1) % 3);
                 break;
@@ -139,4 +138,8 @@ void showHelp() {
 void togglePause() {
     gamePaused = !gamePaused;
     std::cout << "Game: " << (gamePaused ? "PAUSED" : "RESUMED") << std::endl;
+}
+
+bool isGamePaused() {
+    return gamePaused;
 }

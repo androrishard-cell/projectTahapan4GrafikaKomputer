@@ -23,5 +23,6 @@ extern bool getAutoTourStatus();
 extern bool getNightModeStatus();
 extern float getTrophyRotation();
 extern float getBallRotation();
+extern float getStatueAngle();  // DEKLARASI ADA DI SINI
 
 #endif

@@ -27,5 +27,6 @@ extern void handleMouseMotion(int x, int y);
 extern void updateInteractions(float deltaTime);
 extern void showHelp();
 extern void togglePause();
+extern bool isGamePaused();
 
 #endif

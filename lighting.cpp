@@ -1,6 +1,7 @@
 // lighting.cpp
 #include "lighting.h"
 #include <iostream>
+#include <cmath>  // TAMBAHKAN INI untuk sin dan cos
 
 static bool nightMode = false;
 static float lightAngle = 0.0f;
@@ -48,7 +49,6 @@ void initLighting() {
 
 void setupLighting() {
     if (nightMode) {
-        // Night mode - reduce ambient and diffuse
         GLfloat ambientLight[] = {0.05f, 0.05f, 0.1f, 1.0f};
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
         
@@ -58,7 +58,6 @@ void setupLighting() {
         GLfloat diffuse1[] = {0.15f, 0.15f, 0.3f, 1.0f};
         glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse1);
     } else {
-        // Day mode
         GLfloat ambientLight[] = {0.3f, 0.3f, 0.3f, 1.0f};
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
         
@@ -71,7 +70,6 @@ void setupLighting() {
 }
 
 void updateLighting(float deltaTime) {
-    // Move spotlight
     lightAngle += deltaTime * 20.0f;
     if (lightAngle > 360.0f) lightAngle -= 360.0f;
     

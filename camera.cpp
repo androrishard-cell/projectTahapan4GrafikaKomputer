@@ -2,6 +2,8 @@
 #include "camera.h"
 #include "interactions.h"
 #include <iostream>
+#include <string>
+#include <cmath>
 
 // Camera state
 static struct {
@@ -36,7 +38,6 @@ void initCamera() {
 
 void setupCamera() {
     if (camera.mode == CAM_ORBIT) {
-        // Orbit mode - look at center
         float rad = camera.radius;
         float theta = camera.yaw * 3.14159f / 180.0f;
         float phi = camera.pitch * 3.14159f / 180.0f;
@@ -52,7 +53,6 @@ void setupCamera() {
 }
 
 void updateCamera(float deltaTime) {
-    // Update look direction based on yaw/pitch
     float yawRad = camera.yaw * 3.14159f / 180.0f;
     float pitchRad = camera.pitch * 3.14159f / 180.0f;
     
@@ -139,7 +139,6 @@ void rotateCamera(float dx, float dy) {
     camera.yaw += dx * sens;
     camera.pitch -= dy * sens;
     
-    // Clamp pitch
     if (camera.pitch > 89.0f) camera.pitch = 89.0f;
     if (camera.pitch < -89.0f) camera.pitch = -89.0f;
     
@@ -166,3 +165,5 @@ std::string getCameraModeString() {
         default: return "Unknown";
     }
 }
+
+// HAPUS fungsi getStatueAngle() dari sini karena sudah ada di animations.cpp

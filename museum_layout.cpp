@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+
 void initMuseumLayout() {
     // Nothing to init here
 }
