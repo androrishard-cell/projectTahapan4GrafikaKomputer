@@ -19,6 +19,11 @@
 #define TEXTURE_BANNER 12
 #define TEXTURE_SKYBOX 13
 #define TEXTURE_GRASS 14
+#define TEXTURE_METAL 15
+#define TEXTURE_BALL 16
+#define TEXTURE_TIMELINE 17
+#define TEXTURE_PHOTO 18
+#define TEXTURE_PANEL 19
 
 extern void initTextures();
 extern void bindTexture(int id);

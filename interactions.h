@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <vector>
 #include <string>
+#include <cstring>
 
 struct BoundingBox {
     float minX, maxX;

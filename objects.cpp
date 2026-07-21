@@ -3,7 +3,8 @@
 #include "textures.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <math.h>
+#include <cmath>
+#include <cstring>
 
 // ==================== PRIMITIF DASAR ====================
 
@@ -83,7 +84,7 @@ void drawQuad(float w, float h) {
     glEnd();
 }
 
-// ==================== OBJEK MUSEUM ====================
+// ==================== OBJEK DASAR MUSEUM ====================
 
 void drawMuseumBuilding() {
     // Main building
@@ -166,6 +167,66 @@ void drawCR7Statue() {
     glPopMatrix();
 }
 
+void drawCR7CelebrationPose() {
+    // Body
+    glPushMatrix();
+    glTranslatef(0, 1.2f, 0);
+    glScalef(0.5f, 2, 0.5f);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.5f, 1, 16);
+    glPopMatrix();
+    
+    // Head
+    glPushMatrix();
+    glTranslatef(0, 2.8f, 0);
+    bindTexture(TEXTURE_BRONZE);
+    drawSphere(0.4f, 16, 16);
+    glPopMatrix();
+    
+    // Right arm (raised - SIUUU pose)
+    glPushMatrix();
+    glTranslatef(0.5f, 2.2f, 0);
+    glRotatef(-45, 0, 0, 1);
+    glRotatef(20, 0, 1, 0);
+    glScalef(0.08f, 0.8f, 0.08f);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.5f, 1, 8);
+    glPopMatrix();
+    
+    // Left arm
+    glPushMatrix();
+    glTranslatef(-0.5f, 1.8f, 0);
+    glRotatef(30, 0, 0, 1);
+    glScalef(0.08f, 0.6f, 0.08f);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.5f, 1, 8);
+    glPopMatrix();
+    
+    // Right leg
+    glPushMatrix();
+    glTranslatef(0.25f, 0.2f, 0.2f);
+    glScalef(0.1f, 0.8f, 0.1f);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.5f, 1, 8);
+    glPopMatrix();
+    
+    // Left leg
+    glPushMatrix();
+    glTranslatef(-0.25f, 0.2f, -0.2f);
+    glScalef(0.1f, 0.8f, 0.1f);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.5f, 1, 8);
+    glPopMatrix();
+    
+    // Base
+    glPushMatrix();
+    glTranslatef(0, -0.2f, 0);
+    glScalef(1.2f, 0.15f, 1.2f);
+    bindTexture(TEXTURE_MARBLE);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
 void drawTrophy(float scale) {
     glPushMatrix();
     glScalef(scale, scale, scale);
@@ -205,7 +266,39 @@ void drawTrophy(float scale) {
 }
 
 void drawBallonDor() {
-    drawTrophy(0.8f);
+    glPushMatrix();
+    glScalef(0.8f, 0.8f, 0.8f);
+    
+    // Base
+    glPushMatrix();
+    glTranslatef(0, 0, 0);
+    bindTexture(TEXTURE_GOLD);
+    drawCylinder(0.4f, 0.2f, 16);
+    glPopMatrix();
+    
+    // Stem
+    glPushMatrix();
+    glTranslatef(0, 0.4f, 0);
+    bindTexture(TEXTURE_GOLD);
+    drawCylinder(0.08f, 0.6f, 8);
+    glPopMatrix();
+    
+    // Ball
+    glPushMatrix();
+    glTranslatef(0, 0.9f, 0);
+    bindTexture(TEXTURE_GOLD);
+    drawSphere(0.3f, 16, 16);
+    glPopMatrix();
+    
+    // Star on ball
+    glPushMatrix();
+    glTranslatef(0, 0.9f, 0.3f);
+    glScalef(0.05f, 0.05f, 0.05f);
+    bindTexture(TEXTURE_GOLD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    glPopMatrix();
 }
 
 void drawGoldenBoot() {
@@ -238,6 +331,44 @@ void drawGoldenBoot() {
     glPopMatrix();
 }
 
+void drawUCLTrophy() {
+    glPushMatrix();
+    glScalef(0.7f, 0.7f, 0.7f);
+    
+    // Base
+    glPushMatrix();
+    glTranslatef(0, 0, 0);
+    bindTexture(TEXTURE_GOLD);
+    drawCylinder(0.5f, 0.2f, 16);
+    glPopMatrix();
+    
+    // Stem
+    glPushMatrix();
+    glTranslatef(0, 0.4f, 0);
+    bindTexture(TEXTURE_GOLD);
+    drawCylinder(0.08f, 0.8f, 8);
+    glPopMatrix();
+    
+    // Cup
+    glPushMatrix();
+    glTranslatef(0, 1.0f, 0);
+    bindTexture(TEXTURE_GOLD);
+    drawCylinder(0.35f, 0.5f, 16);
+    glPopMatrix();
+    
+    // Handles (Big Ears)
+    for (int i = 0; i < 2; i++) {
+        glPushMatrix();
+        glTranslatef((i == 0 ? 0.5f : -0.5f), 0.8f, 0);
+        glRotatef(i == 0 ? 90 : -90, 0, 0, 1);
+        bindTexture(TEXTURE_GOLD);
+        drawTorus(0.05f, 0.2f, 8, 8);
+        glPopMatrix();
+    }
+    
+    glPopMatrix();
+}
+
 void drawJersey(float w, float h) {
     glPushMatrix();
     glScalef(w, h, 0.05f);
@@ -247,9 +378,25 @@ void drawJersey(float w, float h) {
 }
 
 void drawPillar(float radius, float height) {
+    // Base
     glPushMatrix();
+    glTranslatef(0, 0, 0);
     bindTexture(TEXTURE_MARBLE);
-    drawCylinder(radius, height, 16);
+    drawCylinder(radius + 0.1f, 0.2f, 16);
+    glPopMatrix();
+    
+    // Pillar
+    glPushMatrix();
+    glTranslatef(0, height/2, 0);
+    bindTexture(TEXTURE_MARBLE);
+    drawCylinder(radius, height - 0.4f, 16);
+    glPopMatrix();
+    
+    // Capital (top)
+    glPushMatrix();
+    glTranslatef(0, height - 0.1f, 0);
+    bindTexture(TEXTURE_GOLD);
+    drawCylinder(radius + 0.15f, 0.2f, 16);
     glPopMatrix();
 }
 
@@ -257,6 +404,32 @@ void drawWall(float w, float h, float d) {
     glPushMatrix();
     bindTexture(TEXTURE_WALL);
     drawCube(w, h, d);
+    glPopMatrix();
+}
+
+void drawWalls(float width, float height, float depth) {
+    // Back wall
+    glPushMatrix();
+    glTranslatef(0, height/2, -depth/2);
+    drawWall(width, height, 0.2f);
+    glPopMatrix();
+    
+    // Left wall
+    glPushMatrix();
+    glTranslatef(-width/2, height/2, 0);
+    drawWall(0.2f, height, depth);
+    glPopMatrix();
+    
+    // Right wall
+    glPushMatrix();
+    glTranslatef(width/2, height/2, 0);
+    drawWall(0.2f, height, depth);
+    glPopMatrix();
+    
+    // Front wall (with entrance)
+    glPushMatrix();
+    glTranslatef(0, height/2, depth/2);
+    drawWall(width, height, 0.2f);
     glPopMatrix();
 }
 
@@ -289,5 +462,375 @@ void drawBanner(float w, float h) {
     glPushMatrix();
     bindTexture(TEXTURE_BANNER);
     drawQuad(w, h);
+    glPopMatrix();
+}
+
+void drawGardenLamp() {
+    // Pole
+    glPushMatrix();
+    glTranslatef(0, 1.5f, 0);
+    glScalef(0.08f, 1.5f, 0.08f);
+    bindTexture(TEXTURE_METAL);
+    drawCylinder(0.5f, 1, 8);
+    glPopMatrix();
+    
+    // Lamp
+    glPushMatrix();
+    glTranslatef(0, 2.3f, 0);
+    glScalef(0.3f, 0.2f, 0.3f);
+    glColor4f(1.0f, 0.9f, 0.6f, 0.8f);
+    drawSphere(0.5f, 8, 8);
+    glColor4f(1, 1, 1, 1);
+    glPopMatrix();
+}
+
+void drawBench() {
+    // Seat
+    glPushMatrix();
+    glScalef(0.8f, 0.1f, 0.3f);
+    bindTexture(TEXTURE_WOOD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Legs
+    glPushMatrix();
+    glTranslatef(-0.35f, -0.15f, 0);
+    glScalef(0.05f, 0.3f, 0.05f);
+    bindTexture(TEXTURE_METAL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0.35f, -0.15f, 0);
+    glScalef(0.05f, 0.3f, 0.05f);
+    bindTexture(TEXTURE_METAL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Backrest
+    glPushMatrix();
+    glTranslatef(0, 0.3f, -0.15f);
+    glScalef(0.8f, 0.4f, 0.05f);
+    bindTexture(TEXTURE_WOOD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawChandelier() {
+    // Main rod
+    glPushMatrix();
+    glTranslatef(0, -0.5f, 0);
+    glScalef(0.05f, 0.5f, 0.05f);
+    bindTexture(TEXTURE_GOLD);
+    drawCylinder(0.5f, 1, 8);
+    glPopMatrix();
+    
+    // Main ring
+    glPushMatrix();
+    glTranslatef(0, -0.8f, 0);
+    glScalef(0.8f, 0.05f, 0.8f);
+    bindTexture(TEXTURE_GOLD);
+    drawTorus(0.05f, 0.5f, 8, 8);
+    glPopMatrix();
+    
+    // Small lamps
+    for (int i = 0; i < 8; i++) {
+        float angle = i * 45.0f * 3.14159f / 180.0f;
+        float x = cos(angle) * 0.7f;
+        float z = sin(angle) * 0.7f;
+        
+        glPushMatrix();
+        glTranslatef(x, -0.9f, z);
+        glScalef(0.1f, 0.15f, 0.1f);
+        glColor4f(1.0f, 0.9f, 0.6f, 0.9f);
+        drawSphere(0.5f, 6, 6);
+        glColor4f(1, 1, 1, 1);
+        glPopMatrix();
+    }
+}
+
+// ==================== OBJEK INTERIOR BARU ====================
+
+void drawSectionPanel(const char* text, float w, float h) {
+    // Panel dengan background dan border emas
+    glPushMatrix();
+    glScalef(w, h, 0.05f);
+    bindTexture(TEXTURE_PANEL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Border emas
+    glPushMatrix();
+    glTranslatef(0, 0, 0.03f);
+    glScalef(w + 0.1f, h + 0.1f, 0.01f);
+    bindTexture(TEXTURE_GOLD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawChildhoodRoom() {
+    // Small bed
+    glPushMatrix();
+    glTranslatef(0, 0.2f, 0);
+    glScalef(0.8f, 0.1f, 0.5f);
+    bindTexture(TEXTURE_WOOD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Pillow
+    glPushMatrix();
+    glTranslatef(0, 0.3f, -0.15f);
+    glScalef(0.2f, 0.05f, 0.15f);
+    bindTexture(TEXTURE_JERSEY);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Small table
+    glPushMatrix();
+    glTranslatef(0.5f, 0.1f, 0.3f);
+    glScalef(0.3f, 0.05f, 0.2f);
+    bindTexture(TEXTURE_WOOD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Table legs
+    glPushMatrix();
+    glTranslatef(0.45f, -0.05f, 0.35f);
+    glScalef(0.02f, 0.1f, 0.02f);
+    bindTexture(TEXTURE_METAL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0.55f, -0.05f, 0.25f);
+    glScalef(0.02f, 0.1f, 0.02f);
+    bindTexture(TEXTURE_METAL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawFirstBoots() {
+    // First boots (small)
+    glPushMatrix();
+    glTranslatef(-0.2f, 0.05f, 0);
+    glScalef(0.08f, 0.05f, 0.15f);
+    bindTexture(TEXTURE_BALL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0.2f, 0.05f, 0);
+    glScalef(0.08f, 0.05f, 0.15f);
+    bindTexture(TEXTURE_BALL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Label
+    glPushMatrix();
+    glTranslatef(0, 0.15f, 0);
+    glScalef(0.3f, 0.02f, 0.01f);
+    bindTexture(TEXTURE_BANNER);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawHatTrickBall() {
+    // Ball with hat-trick marking
+    glPushMatrix();
+    glScalef(0.3f, 0.3f, 0.3f);
+    bindTexture(TEXTURE_BALL);
+    drawSphere(0.5f, 12, 12);
+    glPopMatrix();
+    
+    // Small number
+    glPushMatrix();
+    glTranslatef(0, 0.2f, 0.3f);
+    glScalef(0.02f, 0.02f, 0.01f);
+    bindTexture(TEXTURE_GOLD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawMomentPhoto() {
+    // Photo frame
+    glPushMatrix();
+    glScalef(0.7f, 0.9f, 0.02f);
+    bindTexture(TEXTURE_PHOTO);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Frame border
+    glPushMatrix();
+    glTranslatef(0, 0, 0.01f);
+    glScalef(0.75f, 0.95f, 0.01f);
+    bindTexture(TEXTURE_GOLD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawInteractiveZone() {
+    // Interactive screen
+    glPushMatrix();
+    glScalef(1.5f, 1.0f, 0.05f);
+    bindTexture(TEXTURE_GLASS);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Frame
+    glPushMatrix();
+    glTranslatef(0, 0, 0.03f);
+    glScalef(1.6f, 1.1f, 0.01f);
+    bindTexture(TEXTURE_GOLD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Base
+    glPushMatrix();
+    glTranslatef(0, -0.6f, 0);
+    glScalef(0.6f, 0.1f, 0.3f);
+    bindTexture(TEXTURE_MARBLE);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawYouTubeStudio() {
+    // Studio desk
+    glPushMatrix();
+    glTranslatef(0, 0.4f, 0);
+    glScalef(1.0f, 0.05f, 0.6f);
+    bindTexture(TEXTURE_WOOD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Screen
+    glPushMatrix();
+    glTranslatef(0, 0.6f, 0.3f);
+    glScalef(0.6f, 0.4f, 0.02f);
+    bindTexture(TEXTURE_GLASS);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Chair
+    glPushMatrix();
+    glTranslatef(0, 0.1f, -0.3f);
+    glScalef(0.4f, 0.1f, 0.4f);
+    bindTexture(TEXTURE_MARBLE);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Chair back
+    glPushMatrix();
+    glTranslatef(0, 0.3f, -0.2f);
+    glScalef(0.4f, 0.4f, 0.02f);
+    bindTexture(TEXTURE_MARBLE);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawSouvenirShop() {
+    // Shop counter
+    glPushMatrix();
+    glTranslatef(0, 0.4f, 0);
+    glScalef(1.2f, 0.3f, 0.5f);
+    bindTexture(TEXTURE_WOOD);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Display shelves
+    for (int i = -1; i <= 1; i++) {
+        glPushMatrix();
+        glTranslatef(i * 0.5f, 0.7f, 0);
+        glScalef(0.3f, 0.1f, 0.3f);
+        bindTexture(TEXTURE_WOOD);
+        drawCube(1, 1, 1);
+        glPopMatrix();
+    }
+    
+    // Small jerseys on display
+    for (int i = -1; i <= 1; i++) {
+        glPushMatrix();
+        glTranslatef(i * 0.5f, 0.8f, 0.1f);
+        glScalef(0.15f, 0.2f, 0.02f);
+        bindTexture(TEXTURE_JERSEY);
+        drawCube(1, 1, 1);
+        glPopMatrix();
+    }
+}
+
+void drawWaxFigure() {
+    // Body
+    glPushMatrix();
+    glTranslatef(0, 1.2f, 0);
+    glScalef(0.5f, 2.0f, 0.5f);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.5f, 1, 16);
+    glPopMatrix();
+    
+    // Head
+    glPushMatrix();
+    glTranslatef(0, 2.6f, 0);
+    bindTexture(TEXTURE_BRONZE);
+    drawSphere(0.4f, 16, 16);
+    glPopMatrix();
+    
+    // Hair
+    glPushMatrix();
+    glTranslatef(0, 2.7f, 0);
+    glScalef(0.4f, 0.1f, 0.4f);
+    bindTexture(TEXTURE_WALL);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Arms
+    glPushMatrix();
+    glTranslatef(0.6f, 2.0f, 0);
+    glRotatef(-20, 0, 0, 1);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.08f, 0.7f, 8);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(-0.6f, 2.0f, 0);
+    glRotatef(20, 0, 0, 1);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.08f, 0.7f, 8);
+    glPopMatrix();
+    
+    // Legs
+    glPushMatrix();
+    glTranslatef(0.25f, 0.2f, 0);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.12f, 0.8f, 8);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(-0.25f, 0.2f, 0);
+    bindTexture(TEXTURE_BRONZE);
+    drawCylinder(0.12f, 0.8f, 8);
+    glPopMatrix();
+    
+    // Base
+    glPushMatrix();
+    glTranslatef(0, -0.1f, 0);
+    glScalef(0.8f, 0.1f, 0.8f);
+    bindTexture(TEXTURE_MARBLE);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+}
+
+void drawTimelinePanel(const char* year) {
+    // Panel background
+    glPushMatrix();
+    glScalef(0.6f, 0.5f, 0.05f);
+    bindTexture(TEXTURE_TIMELINE);
+    drawCube(1, 1, 1);
+    glPopMatrix();
+    
+    // Gold border
+    glPushMatrix();
+    glTranslatef(0, 0, 0.03f);
+    glScalef(0.65f, 0.55f, 0.01f);
+    bindTexture(TEXTURE_GOLD);
+    drawCube(1, 1, 1);
     glPopMatrix();
 }

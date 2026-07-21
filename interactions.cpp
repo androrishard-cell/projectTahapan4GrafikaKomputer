@@ -1,13 +1,17 @@
 // interactions.cpp
 #include "interactions.h"
-#include "camera.h"
-#include "animations.h"
 #include <iostream>
 #include <cmath>
 #include <cstring>
+#include <vector>
+
+// Forward declarations untuk fungsi dari camera.h
+extern int getCurrentCameraMode();
+extern void setCameraMode(int mode);
+extern std::string getCameraModeString();
+extern void rotateCamera(float dx, float dy);
 
 static std::vector<GameObject> gameObjects;
-static bool helpVisible = false;
 static bool gamePaused = false;
 
 void initInteractions() {
@@ -16,7 +20,7 @@ void initInteractions() {
     // Museum building
     strcpy(obj.name, "Museum");
     obj.x = 0; obj.y = 0; obj.z = 0;
-    obj.width = 16; obj.height = 10; obj.depth = 12;
+    obj.width = 18; obj.height = 12; obj.depth = 14;
     obj.bbox.minX = obj.x - obj.width/2;
     obj.bbox.maxX = obj.x + obj.width/2;
     obj.bbox.minY = obj.y - obj.height/2;
@@ -29,7 +33,7 @@ void initInteractions() {
     // CR7 Statue
     strcpy(obj.name, "CR7 Statue");
     obj.x = -4; obj.y = 0; obj.z = -8;
-    obj.width = 1.5; obj.height = 3; obj.depth = 1.5;
+    obj.width = 2; obj.height = 3.5; obj.depth = 2;
     obj.bbox.minX = obj.x - obj.width/2;
     obj.bbox.maxX = obj.x + obj.width/2;
     obj.bbox.minY = obj.y - obj.height/2;
@@ -39,17 +43,36 @@ void initInteractions() {
     obj.isSolid = true;
     gameObjects.push_back(obj);
     
+    // Trees
+    for (int i = 0; i < 2; i++) {
+        strcpy(obj.name, "Tree");
+        obj.x = (i == 0) ? 8 : -8;
+        obj.y = 0;
+        obj.z = -6;
+        obj.width = 2; obj.height = 4; obj.depth = 2;
+        obj.bbox.minX = obj.x - obj.width/2;
+        obj.bbox.maxX = obj.x + obj.width/2;
+        obj.bbox.minY = obj.y - obj.height/2;
+        obj.bbox.maxY = obj.y + obj.height/2;
+        obj.bbox.minZ = obj.z - obj.depth/2;
+        obj.bbox.maxZ = obj.z + obj.depth/2;
+        obj.isSolid = true;
+        gameObjects.push_back(obj);
+    }
+    
     std::cout << "Interactions initialized with " << gameObjects.size() << " objects" << std::endl;
 }
 
 void checkCollisions(float* x, float* y, float* z) {
     BoundingBox playerBox;
-    playerBox.minX = *x - 0.3f;
-    playerBox.maxX = *x + 0.3f;
-    playerBox.minY = *y - 0.9f;
-    playerBox.maxY = *y + 0.9f;
-    playerBox.minZ = *z - 0.3f;
-    playerBox.maxZ = *z + 0.3f;
+    float radius = 0.4f;
+    float height = 0.9f;
+    playerBox.minX = *x - radius;
+    playerBox.maxX = *x + radius;
+    playerBox.minY = *y - height;
+    playerBox.maxY = *y + height;
+    playerBox.minZ = *z - radius;
+    playerBox.maxZ = *z + radius;
     
     for (const auto& obj : gameObjects) {
         if (!obj.isSolid) continue;
@@ -85,14 +108,12 @@ void checkCollisions(float* x, float* y, float* z) {
 
 void handleMouseClick(int button, int state, int x, int y) {
     if (state == GLUT_DOWN) {
-        switch (button) {
-            case GLUT_LEFT_BUTTON:
-                std::cout << "Click at: " << x << ", " << y << std::endl;
-                break;
-            case GLUT_RIGHT_BUTTON:
-                int mode = getCurrentCameraMode();
-                setCameraMode((mode + 1) % 3);
-                break;
+        if (button == GLUT_LEFT_BUTTON) {
+            std::cout << "Click at: " << x << ", " << y << std::endl;
+        } else if (button == GLUT_RIGHT_BUTTON) {
+            int mode = getCurrentCameraMode();
+            setCameraMode((mode + 1) % 3);
+            std::cout << "Camera Mode: " << getCameraModeString() << std::endl;
         }
     }
 }
@@ -109,12 +130,9 @@ void handleMouseMotion(int x, int y) {
     rotateCamera(dx, dy);
 }
 
-void updateInteractions(float deltaTime) {
-    // Update collision objects if needed
-}
+void updateInteractions(float deltaTime) {}
 
 void showHelp() {
-    helpVisible = !helpVisible;
     std::cout << "\n========================================" << std::endl;
     std::cout << "  MUSEUM VIRTUAL 3D CR7 - HELP" << std::endl;
     std::cout << "========================================" << std::endl;
@@ -125,6 +143,7 @@ void showHelp() {
     std::cout << "  2       - Orbit Camera" << std::endl;
     std::cout << "  3       - Free Fly Camera" << std::endl;
     std::cout << "  E       - Enter/Exit Museum" << std::endl;
+    std::cout << "  Q       - Exit Museum (Interior)" << std::endl;
     std::cout << "  A       - Auto Tour" << std::endl;
     std::cout << "  T       - Night Mode" << std::endl;
     std::cout << "  Space   - Celebration!" << std::endl;
@@ -132,6 +151,7 @@ void showHelp() {
     std::cout << "  F       - Fullscreen" << std::endl;
     std::cout << "  ESC     - Pause" << std::endl;
     std::cout << "  H / F1  - This Help" << std::endl;
+    std::cout << "  Right Mouse - Switch Camera" << std::endl;
     std::cout << "========================================" << std::endl;
 }
 
@@ -140,6 +160,4 @@ void togglePause() {
     std::cout << "Game: " << (gamePaused ? "PAUSED" : "RESUMED") << std::endl;
 }
 
-bool isGamePaused() {
-    return gamePaused;
-}
+bool isGamePaused() { return gamePaused; }

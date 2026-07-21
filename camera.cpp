@@ -16,6 +16,7 @@ static struct {
     int mode;
     float speed;
     float mouseSensitivity;
+    bool isMoving;
 } camera;
 
 void initCamera() {
@@ -33,7 +34,8 @@ void initCamera() {
     camera.radius = 15.0f;
     camera.mode = CAM_FIRST_PERSON;
     camera.speed = 3.0f;
-    camera.mouseSensitivity = 0.1f;
+    camera.mouseSensitivity = 0.15f;
+    camera.isMoving = false;
 }
 
 void setupCamera() {
@@ -42,9 +44,9 @@ void setupCamera() {
         float theta = camera.yaw * 3.14159f / 180.0f;
         float phi = camera.pitch * 3.14159f / 180.0f;
         
-        camera.eyeX = rad * cos(theta) * cos(phi);
-        camera.eyeY = rad * sin(phi);
-        camera.eyeZ = rad * sin(theta) * cos(phi);
+        camera.eyeX = camera.centerX + rad * cos(theta) * cos(phi);
+        camera.eyeY = camera.centerY + rad * sin(phi);
+        camera.eyeZ = camera.centerZ + rad * sin(theta) * cos(phi);
     }
     
     gluLookAt(camera.eyeX, camera.eyeY, camera.eyeZ,
@@ -63,16 +65,11 @@ void updateCamera(float deltaTime) {
 
 void setCameraMode(int mode) {
     camera.mode = mode;
-    switch (mode) {
-        case CAM_FIRST_PERSON:
-            std::cout << "Camera: First Person" << std::endl;
-            break;
-        case CAM_ORBIT:
-            std::cout << "Camera: Orbit" << std::endl;
-            break;
-        case CAM_FREE_FLY:
-            std::cout << "Camera: Free Fly" << std::endl;
-            break;
+    if (mode == CAM_ORBIT) {
+        // Hitung jarak ke center
+        camera.radius = sqrt(pow(camera.eyeX - camera.centerX, 2) + 
+                            pow(camera.eyeY - camera.centerY, 2) + 
+                            pow(camera.eyeZ - camera.centerZ, 2));
     }
 }
 
@@ -82,7 +79,7 @@ void setCameraModeFreeFly() { setCameraMode(CAM_FREE_FLY); }
 
 void moveCamera(int direction, float speed) {
     if (speed <= 0) speed = camera.speed;
-    float moveSpeed = speed * 2.0f;
+    float moveSpeed = speed * 2.5f;
     float yawRad = camera.yaw * 3.14159f / 180.0f;
     float pitchRad = camera.pitch * 3.14159f / 180.0f;
     
@@ -149,6 +146,9 @@ void resetCamera() {
     camera.eyeX = 0.0f;
     camera.eyeY = 2.0f;
     camera.eyeZ = 15.0f;
+    camera.centerX = 0.0f;
+    camera.centerY = 1.0f;
+    camera.centerZ = 0.0f;
     camera.yaw = 0.0f;
     camera.pitch = 0.0f;
     camera.radius = 15.0f;
@@ -165,5 +165,3 @@ std::string getCameraModeString() {
         default: return "Unknown";
     }
 }
-
-// HAPUS fungsi getStatueAngle() dari sini karena sudah ada di animations.cpp

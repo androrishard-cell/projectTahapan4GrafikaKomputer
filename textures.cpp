@@ -4,11 +4,25 @@
 #include <cstdlib>
 #include <cmath>
 
-// Simple procedural textures
 static GLuint textures[20];
 static bool texturesLoaded = false;
 
-// ==================== GENERATE PROCEDURAL TEXTURES ====================
+// ==================== DEKLARASI FUNGSI ====================
+void generateCheckerTexture(GLuint texID, int size, unsigned char r1, unsigned char g1, unsigned char b1,
+                            unsigned char r2, unsigned char g2, unsigned char b2);
+void generateMarbleTexture(GLuint texID, int size);
+void generateGoldTexture(GLuint texID, int size);
+void generateWoodTexture(GLuint texID, int size);
+void generateGrassTexture(GLuint texID, int size);
+void generateSkyboxTexture(GLuint texID, int size);
+void generateBronzeTexture(GLuint texID, int size);
+void generateMetalTexture(GLuint texID, int size);
+void generateBallTexture(GLuint texID, int size);
+void generateTimelineTexture(GLuint texID, int size);
+void generatePhotoTexture(GLuint texID, int size);
+void generatePanelTexture(GLuint texID, int size);
+
+// ==================== IMPLEMENTASI ====================
 
 void generateCheckerTexture(GLuint texID, int size, unsigned char r1, unsigned char g1, unsigned char b1,
                             unsigned char r2, unsigned char g2, unsigned char b2) {
@@ -162,35 +176,138 @@ void generateBronzeTexture(GLuint texID, int size) {
     delete[] data;
 }
 
+void generateMetalTexture(GLuint texID, int size) {
+    unsigned char* data = new unsigned char[size * size * 3];
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            float noise = ((float)rand() / RAND_MAX - 0.5f) * 30.0f;
+            int idx = (i * size + j) * 3;
+            data[idx] = (unsigned char)(180 + noise);
+            data[idx+1] = (unsigned char)(180 + noise);
+            data[idx+2] = (unsigned char)(190 + noise);
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size, size, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    delete[] data;
+}
+
+void generateBallTexture(GLuint texID, int size) {
+    unsigned char* data = new unsigned char[size * size * 3];
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            float dist = sqrt(pow((float)i/size - 0.5f, 2) + pow((float)j/size - 0.5f, 2));
+            int idx = (i * size + j) * 3;
+            if (dist < 0.4f) {
+                data[idx] = 255; data[idx+1] = 255; data[idx+2] = 255;
+            } else {
+                data[idx] = 50; data[idx+1] = 50; data[idx+2] = 50;
+            }
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size, size, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    delete[] data;
+}
+
+void generateTimelineTexture(GLuint texID, int size) {
+    unsigned char* data = new unsigned char[size * size * 3];
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            int idx = (i * size + j) * 3;
+            if (i < size/2) {
+                data[idx] = 200; data[idx+1] = 180; data[idx+2] = 150;
+            } else {
+                data[idx] = 150; data[idx+1] = 130; data[idx+2] = 100;
+            }
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size, size, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    delete[] data;
+}
+
+void generatePhotoTexture(GLuint texID, int size) {
+    unsigned char* data = new unsigned char[size * size * 3];
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            float noise = ((float)rand() / RAND_MAX - 0.5f) * 20.0f;
+            int idx = (i * size + j) * 3;
+            data[idx] = (unsigned char)(150 + noise);
+            data[idx+1] = (unsigned char)(120 + noise);
+            data[idx+2] = (unsigned char)(100 + noise);
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size, size, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    delete[] data;
+}
+
+void generatePanelTexture(GLuint texID, int size) {
+    unsigned char* data = new unsigned char[size * size * 3];
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            int idx = (i * size + j) * 3;
+            if ((i + j) % 4 < 2) {
+                data[idx] = 180; data[idx+1] = 160; data[idx+2] = 130;
+            } else {
+                data[idx] = 160; data[idx+1] = 140; data[idx+2] = 110;
+            }
+        }
+    }
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size, size, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    delete[] data;
+}
+
 // ==================== INISIALISASI ====================
 
 void initTextures() {
     if (texturesLoaded) return;
     
-    glGenTextures(14, textures);
+    glGenTextures(20, textures);
     
     // Generate semua texture
     generateCheckerTexture(textures[0], 256, 200, 180, 160, 100, 80, 60);  // FLOOR
-    generateMarbleTexture(textures[1], 256);  // WALL
+    generateMarbleTexture(textures[1], 256);   // WALL
     generateCheckerTexture(textures[2], 256, 180, 170, 150, 120, 110, 100); // BUILDING
     generateCheckerTexture(textures[3], 256, 150, 80, 40, 100, 50, 20); // ROOF
     generateCheckerTexture(textures[4], 128, 150, 200, 255, 100, 150, 200); // GLASS
-    generateGoldTexture(textures[5], 256); // GOLD
-    generateBronzeTexture(textures[6], 256); // BRONZE
-    generateMarbleTexture(textures[7], 256); // MARBLE
-    generateWoodTexture(textures[8], 256); // WOOD
+    generateGoldTexture(textures[5], 256);      // GOLD
+    generateBronzeTexture(textures[6], 256);    // BRONZE
+    generateMarbleTexture(textures[7], 256);    // MARBLE
+    generateWoodTexture(textures[8], 256);      // WOOD
     generateCheckerTexture(textures[9], 128, 50, 150, 50, 30, 100, 30); // LEAVES
     generateCheckerTexture(textures[10], 256, 200, 50, 50, 50, 50, 50); // JERSEY
     generateCheckerTexture(textures[11], 256, 200, 50, 50, 100, 100, 100); // BANNER
-    generateSkyboxTexture(textures[12], 256); // SKYBOX
-    generateGrassTexture(textures[13], 256); // GRASS
+    generateSkyboxTexture(textures[12], 256);   // SKYBOX
+    generateGrassTexture(textures[13], 256);    // GRASS
+    generateMetalTexture(textures[14], 256);    // METAL
+    generateBallTexture(textures[15], 256);     // BALL
+    generateTimelineTexture(textures[16], 256); // TIMELINE
+    generatePhotoTexture(textures[17], 256);    // PHOTO
+    generatePanelTexture(textures[18], 256);    // PANEL
     
     texturesLoaded = true;
-    std::cout << "Textures initialized: 14 textures" << std::endl;
+    std::cout << "Textures initialized: 19 textures" << std::endl;
 }
 
 void bindTexture(int id) {
-    if (id >= 0 && id < 14 && texturesLoaded) {
+    if (id >= 0 && id < 20 && texturesLoaded) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, textures[id]);
     } else {

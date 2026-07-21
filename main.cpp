@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
+#include <cmath>
 
 #include "camera.h"
 #include "lighting.h"
@@ -30,6 +31,10 @@ int fps = 0;
 int frameCount = 0;
 float fpsTimer = 0;
 
+// Variabel untuk keyboard state
+bool keys[256] = {false};
+bool isNightMode = false;
+
 // ==================== DEKLARASI FUNGSI ====================
 void initGL();
 void renderScene();
@@ -37,7 +42,8 @@ void renderHUD();
 void renderMenu();
 void updateScene();
 void reshape(int w, int h);
-void keyboard(unsigned char key, int x, int y);
+void keyboardDown(unsigned char key, int x, int y);
+void keyboardUp(unsigned char key, int x, int y);
 void specialKeys(int key, int x, int y);
 void mouse(int button, int state, int x, int y);
 void motion(int x, int y);
@@ -107,8 +113,8 @@ void renderHUD() {
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     
-    // Background HUD
-    glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
+    // Background HUD - Top Bar
+    glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
     glBegin(GL_QUADS);
     glVertex2f(0, WINDOW_HEIGHT - 70);
     glVertex2f(WINDOW_WIDTH, WINDOW_HEIGHT - 70);
@@ -124,7 +130,7 @@ void renderHUD() {
     
     // Scene info
     glColor3f(0.7f, 0.9f, 1.0f);
-    glRasterPos2f(WINDOW_WIDTH - 300, WINDOW_HEIGHT - 30);
+    glRasterPos2f(WINDOW_WIDTH - 250, WINDOW_HEIGHT - 30);
     std::string scene = "Scene: " + std::string(currentScene == 0 ? "EXTERIOR" : "INTERIOR");
     for (char c : scene) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
     
@@ -151,7 +157,7 @@ void renderHUD() {
         glColor3f(1.0f, 0.2f, 0.2f);
         glRasterPos2f(WINDOW_WIDTH/2 - 50, WINDOW_HEIGHT/2);
         std::string pause = "PAUSED";
-        for (char c : pause) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);  // Ganti 24 jadi 18
+        for (char c : pause) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
     }
     
     glEnable(GL_LIGHTING);
@@ -175,35 +181,42 @@ void renderMenu() {
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     
-    glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
+    // Background menu - Bottom Left
+    glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
     glBegin(GL_QUADS);
     glVertex2f(10, 10);
     glVertex2f(200, 10);
-    glVertex2f(200, 110);
-    glVertex2f(10, 110);
+    glVertex2f(200, 130);
+    glVertex2f(10, 130);
     glEnd();
     
     glColor3f(0.8f, 0.8f, 0.8f);
-    glRasterPos2f(15, 95);
+    glRasterPos2f(15, 120);
     std::string controls = "CONTROLS:";
     for (char c : controls) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
     
     glColor3f(0.6f, 0.6f, 0.6f);
-    glRasterPos2f(15, 80);
+    glRasterPos2f(15, 105);
     std::string w = "WASD - Move";
     for (char c : w) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 65);
+    glRasterPos2f(15, 90);
     std::string m = "Mouse - Look";
     for (char c : m) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 50);
-    std::string e = "E - Open Door";
+    glRasterPos2f(15, 75);
+    std::string e = "E - Enter/Exit Museum";
     for (char c : e) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 35);
-    std::string h = "H - Help";
-    for (char c : h) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 20);
-    std::string esc = "ESC - Pause";
-    for (char c : esc) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    glRasterPos2f(15, 60);
+    std::string q = "Q - Exit (Interior)";
+    for (char c : q) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    glRasterPos2f(15, 45);
+    std::string a = "A - Auto Tour";
+    for (char c : a) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    glRasterPos2f(15, 30);
+    std::string t = "T - Night Mode";
+    for (char c : t) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    glRasterPos2f(15, 15);
+    std::string sp = "Space - Celebration!";
+    for (char c : sp) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
     
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
@@ -218,6 +231,12 @@ void renderMenu() {
 
 void updateScene() {
     if (isPaused) return;
+    
+    // Handle continuous key presses
+    if (keys['w'] || keys['W']) moveCamera(FORWARD, deltaTime);
+    if (keys['s'] || keys['S']) moveCamera(BACKWARD, deltaTime);
+    if (keys['a']) moveCamera(LEFT, deltaTime);
+    if (keys['d']) moveCamera(RIGHT, deltaTime);
     
     updateAnimations(deltaTime);
     updateInteractions(deltaTime);
@@ -246,7 +265,9 @@ void timer(int value) {
     glutTimerFunc(16, timer, 0);
 }
 
-void idle() {}
+void idle() {
+    glutPostRedisplay();
+}
 
 // ==================== CALLBACK FUNGSI ====================
 
@@ -258,16 +279,15 @@ void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void keyboard(unsigned char key, int x, int y) {
+void keyboardDown(unsigned char key, int x, int y) {
+    keys[key] = true;
+    
     if (isPaused && key != 27) return;
     
     switch (key) {
         case 27: // ESC
-            if (isPaused) {
-                isPaused = false;
-            } else {
-                isPaused = true;
-            }
+            togglePause();
+            isPaused = !isPaused;
             break;
             
         case 'h':
@@ -277,24 +297,39 @@ void keyboard(unsigned char key, int x, int y) {
             
         case '1':
             setCameraMode(CAM_FIRST_PERSON);
+            std::cout << "Camera: First Person" << std::endl;
             break;
             
         case '2':
             setCameraMode(CAM_ORBIT);
+            std::cout << "Camera: Orbit" << std::endl;
             break;
             
         case '3':
             setCameraMode(CAM_FREE_FLY);
+            std::cout << "Camera: Free Fly" << std::endl;
             break;
             
         case 'e':
         case 'E':
             if (currentScene == 0) {
                 currentScene = 1;
-                std::cout << "Entering Museum..." << std::endl;
+                std::cout << ">>> Entering Museum..." << std::endl;
+                // Reset posisi di dalam
+                resetCamera();
             } else {
                 currentScene = 0;
-                std::cout << "Exiting Museum..." << std::endl;
+                std::cout << ">>> Exiting Museum..." << std::endl;
+                resetCamera();
+            }
+            break;
+            
+        case 'q':
+        case 'Q':
+            if (currentScene == 1) {
+                currentScene = 0;
+                std::cout << ">>> Exiting Museum..." << std::endl;
+                resetCamera();
             }
             break;
             
@@ -311,40 +346,26 @@ void keyboard(unsigned char key, int x, int y) {
         case 'r':
         case 'R':
             resetCamera();
+            std::cout << "Camera Reset" << std::endl;
             break;
             
         case ' ':
             triggerCelebration();
+            std::cout << ">>> CELEBRATION! SIUUU!" << std::endl;
             break;
             
         case 'f':
         case 'F':
-            glutFullScreen();  // Ganti glutFullScreenToggle dengan glutFullScreen
-            break;
-            
-        case 'w':
-            moveCamera(FORWARD, deltaTime);
-            break;
-            
-        case 's':
-            moveCamera(BACKWARD, deltaTime);
-            break;
-            
-        case 'd':
-            moveCamera(RIGHT, deltaTime);
-            break;
-            
-        case 'q':
-        case 'Q':
-            if (currentScene == 1) {
-                currentScene = 0;
-                std::cout << "Exiting Museum..." << std::endl;
-            }
+            glutFullScreen();
             break;
             
         default:
             break;
     }
+}
+
+void keyboardUp(unsigned char key, int x, int y) {
+    keys[key] = false;
 }
 
 void specialKeys(int key, int x, int y) {
@@ -370,7 +391,7 @@ void specialKeys(int key, int x, int y) {
             break;
             
         case GLUT_KEY_F11:
-            glutFullScreen();  // Ganti glutFullScreenToggle dengan glutFullScreen
+            glutFullScreen();
             break;
             
         case GLUT_KEY_UP:
@@ -412,7 +433,8 @@ int main(int argc, char** argv) {
     
     glutDisplayFunc(renderScene);
     glutReshapeFunc(reshape);
-    glutKeyboardFunc(keyboard);
+    glutKeyboardFunc(keyboardDown);
+    glutKeyboardUpFunc(keyboardUp);
     glutSpecialFunc(specialKeys);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
