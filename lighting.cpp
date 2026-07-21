@@ -6,43 +6,45 @@
 static bool nightMode = false;
 static float lightAngle = 0.0f;
 
+// lighting.cpp
 void initLighting() {
-    // Ambient light
-    GLfloat ambientLight[] = {0.3f, 0.3f, 0.3f, 1.0f};
+    // ===== AMBIENT LIGHT (Cahaya dasar yang terang) =====
+    GLfloat ambientLight[] = {0.6f, 0.6f, 0.6f, 1.0f};  // DITINGKATKAN
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
     
-    // Light 0 - Main light (diffuse + specular)
-    GLfloat lightPos0[] = {5.0f, 10.0f, 5.0f, 1.0f};
-    GLfloat diffuse0[] = {0.8f, 0.8f, 0.8f, 1.0f};
+    // ===== LIGHT 0 - Cahaya utama dari atas =====
+    GLfloat lightPos0[] = {0.0f, 20.0f, 0.0f, 1.0f};
+    GLfloat diffuse0[] = {1.0f, 1.0f, 1.0f, 1.0f};  // TERANG
     GLfloat specular0[] = {0.5f, 0.5f, 0.5f, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse0);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specular0);
     glEnable(GL_LIGHT0);
     
-    // Light 1 - Spotlight
-    GLfloat lightPos1[] = {-3.0f, 8.0f, 0.0f, 1.0f};
-    GLfloat spotDir[] = {1.0f, -1.0f, 0.0f};
-    GLfloat diffuse1[] = {0.6f, 0.6f, 0.8f, 1.0f};
-    GLfloat specular1[] = {0.8f, 0.8f, 0.8f, 1.0f};
+    // ===== LIGHT 1 - Cahaya dari samping =====
+    GLfloat lightPos1[] = {15.0f, 10.0f, 15.0f, 1.0f};
+    GLfloat diffuse1[] = {0.8f, 0.8f, 0.8f, 1.0f};
     glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotDir);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse1);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, specular1);
-    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0f);
-    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0f);
     glEnable(GL_LIGHT1);
     
-    // Light 2 - Fill light
-    GLfloat lightPos2[] = {-5.0f, 5.0f, -5.0f, 1.0f};
-    GLfloat diffuse2[] = {0.3f, 0.3f, 0.4f, 1.0f};
+    // ===== LIGHT 2 - Cahaya dari belakang =====
+    GLfloat lightPos2[] = {-15.0f, 10.0f, -15.0f, 1.0f};
+    GLfloat diffuse2[] = {0.7f, 0.7f, 0.7f, 1.0f};
     glLightfv(GL_LIGHT2, GL_POSITION, lightPos2);
     glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse2);
     glEnable(GL_LIGHT2);
     
+    // ===== ENABLE LIGHTING =====
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    
+    // Material properties
+    GLfloat matSpecular[] = {0.3f, 0.3f, 0.3f, 1.0f};
+    GLfloat matShininess[] = {50.0f};
+    glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, matShininess);
     
     std::cout << "Lighting initialized" << std::endl;
 }

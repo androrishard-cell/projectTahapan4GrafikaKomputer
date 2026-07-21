@@ -276,34 +276,30 @@ void generatePanelTexture(GLuint texID, int size) {
 
 // ==================== INISIALISASI ====================
 
+// textures.cpp - Ganti dengan texture warna solid
+
 void initTextures() {
     if (texturesLoaded) return;
     
     glGenTextures(20, textures);
     
-    // Generate semua texture
-    generateCheckerTexture(textures[0], 256, 200, 180, 160, 100, 80, 60);  // FLOOR
-    generateMarbleTexture(textures[1], 256);   // WALL
-    generateCheckerTexture(textures[2], 256, 180, 170, 150, 120, 110, 100); // BUILDING
-    generateCheckerTexture(textures[3], 256, 150, 80, 40, 100, 50, 20); // ROOF
-    generateCheckerTexture(textures[4], 128, 150, 200, 255, 100, 150, 200); // GLASS
-    generateGoldTexture(textures[5], 256);      // GOLD
-    generateBronzeTexture(textures[6], 256);    // BRONZE
-    generateMarbleTexture(textures[7], 256);    // MARBLE
-    generateWoodTexture(textures[8], 256);      // WOOD
-    generateCheckerTexture(textures[9], 128, 50, 150, 50, 30, 100, 30); // LEAVES
-    generateCheckerTexture(textures[10], 256, 200, 50, 50, 50, 50, 50); // JERSEY
-    generateCheckerTexture(textures[11], 256, 200, 50, 50, 100, 100, 100); // BANNER
-    generateSkyboxTexture(textures[12], 256);   // SKYBOX
-    generateGrassTexture(textures[13], 256);    // GRASS
-    generateMetalTexture(textures[14], 256);    // METAL
-    generateBallTexture(textures[15], 256);     // BALL
-    generateTimelineTexture(textures[16], 256); // TIMELINE
-    generatePhotoTexture(textures[17], 256);    // PHOTO
-    generatePanelTexture(textures[18], 256);    // PANEL
+    // Buat texture warna solid untuk setiap ID
+    for (int i = 0; i < 20; i++) {
+        unsigned char data[3] = {
+            (unsigned char)(100 + rand() % 155),
+            (unsigned char)(100 + rand() % 155),
+            (unsigned char)(100 + rand() % 155)
+        };
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
     
     texturesLoaded = true;
-    std::cout << "Textures initialized: 19 textures" << std::endl;
+    std::cout << "Textures initialized (procedural)" << std::endl;
 }
 
 void bindTexture(int id) {

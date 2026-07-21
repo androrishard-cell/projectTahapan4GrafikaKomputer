@@ -52,8 +52,9 @@ void idle();
 
 // ==================== INISIALISASI ====================
 
+// main.cpp - initGL()
 void initGL() {
-    glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+    glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -63,17 +64,25 @@ void initGL() {
     
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     
+    // ===== INIT TEXTURE =====
     initTextures();
-    initLighting();
+    
+    // ===== INIT LIGHTING (PASTIKAN INI DIPANGGIL) =====
+    initLighting();  // <-- HARUS ADA
+    
     initCamera();
     initAnimations();
     initInteractions();
     initMuseumLayout();
     
+    currentScene = 0;
+    resetCamera();
+    
     std::cout << "========================================" << std::endl;
     std::cout << "  MUSEUM VIRTUAL 3D CR7 - MADEIRA" << std::endl;
     std::cout << "========================================" << std::endl;
     std::cout << "Press H or F1 for Help" << std::endl;
+    std::cout << "Press E to Enter Museum" << std::endl;
     std::cout << "========================================" << std::endl;
 }
 
