@@ -15,14 +15,12 @@
 #include "animations.h"
 #include "interactions.h"
 #include "museum_layout.h"
-
-// ==================== KONSTANTA ====================
-const int WINDOW_WIDTH = 1024;
-const int WINDOW_HEIGHT = 768;
-const char* WINDOW_TITLE = "Museum Virtual 3D CR7 - Madeira";
+#include "sound.h"
+#include "ui.h"
+#include "floor2.h"
 
 // ==================== VARIABEL GLOBAL ====================
-int currentScene = 1;        // 0: Exterior, 1: Interior
+int currentScene = 0;
 bool isRunning = true;
 bool isPaused = false;
 float deltaTime = 0.016f;
@@ -30,10 +28,14 @@ int lastTime = 0;
 int fps = 0;
 int frameCount = 0;
 float fpsTimer = 0;
-
-// Variabel untuk keyboard state
 bool keys[256] = {false};
-bool isNightMode = false;
+
+int selectedArea = 0;
+const char* areas[] = {"Main Hall", "Trophy Room", "Wall of Fame", "Timeline", "Souvenir"};
+
+// Window size
+int windowWidth = 1024;
+int windowHeight = 768;
 
 // ==================== DEKLARASI FUNGSI ====================
 void initGL();
@@ -49,10 +51,11 @@ void mouse(int button, int state, int x, int y);
 void motion(int x, int y);
 void timer(int value);
 void idle();
+void focusOnCollection();
+void teleportToArea(int area);
 
-// ==================== INISIALISASI ====================
+// ==================== IMPLEMENTASI FUNGSI ====================
 
-// main.cpp - initGL()
 void initGL() {
     glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -62,14 +65,10 @@ void initGL() {
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glViewport(0, 0, windowWidth, windowHeight);
     
-    // ===== INIT TEXTURE =====
     initTextures();
-    
-    // ===== INIT LIGHTING (PASTIKAN INI DIPANGGIL) =====
-    initLighting();  // <-- HARUS ADA
-    
+    initLighting();
     initCamera();
     initAnimations();
     initInteractions();
@@ -83,42 +82,16 @@ void initGL() {
     std::cout << "========================================" << std::endl;
     std::cout << "Press H or F1 for Help" << std::endl;
     std::cout << "Press E to Enter Museum" << std::endl;
+    std::cout << "Press M to toggle Sound" << std::endl;
+    std::cout << "Press B to toggle Floor 2" << std::endl;
     std::cout << "========================================" << std::endl;
 }
-
-// ==================== RENDER UTAMA ====================
-
-// main.cpp - Di bagian atas
-#include "museum_layout.h"  // Pastikan ini sudah ada
-
-// Di dalam renderScene(), pastikan currentScene berfungsi:
-void renderScene() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    
-    setupCamera();
-    setupLighting();
-    
-    if (currentScene == 0) {
-        renderExterior();
-    } else {
-        renderInterior();
-    }
-    
-    renderAnimations();
-    renderHUD();
-    renderMenu();
-    
-    glutSwapBuffers();
-}
-
-// ==================== RENDER HUD ====================
 
 void renderHUD() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -129,46 +102,52 @@ void renderHUD() {
     // Background HUD - Top Bar
     glColor4f(0.0f, 0.0f, 0.0f, 0.7f);
     glBegin(GL_QUADS);
-    glVertex2f(0, WINDOW_HEIGHT - 70);
-    glVertex2f(WINDOW_WIDTH, WINDOW_HEIGHT - 70);
-    glVertex2f(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glVertex2f(0, WINDOW_HEIGHT);
+    glVertex2f(0, windowHeight - 70);
+    glVertex2f(windowWidth, windowHeight - 70);
+    glVertex2f(windowWidth, windowHeight);
+    glVertex2f(0, windowHeight);
     glEnd();
     
     // Title
     glColor3f(1.0f, 0.8f, 0.2f);
-    glRasterPos2f(20, WINDOW_HEIGHT - 30);
+    glRasterPos2f(20, windowHeight - 30);
     std::string title = "MUSEUM VIRTUAL 3D CR7 - MADEIRA";
     for (char c : title) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
     
     // Scene info
     glColor3f(0.7f, 0.9f, 1.0f);
-    glRasterPos2f(WINDOW_WIDTH - 250, WINDOW_HEIGHT - 30);
+    glRasterPos2f(windowWidth - 250, windowHeight - 30);
     std::string scene = "Scene: " + std::string(currentScene == 0 ? "EXTERIOR" : "INTERIOR");
     for (char c : scene) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
     
     // Camera mode
     glColor3f(0.5f, 1.0f, 0.5f);
-    glRasterPos2f(20, WINDOW_HEIGHT - 55);
+    glRasterPos2f(20, windowHeight - 55);
     std::string cam = "Camera: " + getCameraModeString();
     for (char c : cam) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
     
     // Night mode status
     glColor3f(0.8f, 0.8f, 1.0f);
-    glRasterPos2f(WINDOW_WIDTH - 180, WINDOW_HEIGHT - 55);
+    glRasterPos2f(windowWidth - 180, windowHeight - 55);
     std::string night = "Night Mode: " + std::string(getNightModeStatus() ? "ON" : "OFF");
     for (char c : night) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
     
+    // Floor status
+    glColor3f(0.8f, 1.0f, 0.8f);
+    glRasterPos2f(windowWidth - 350, windowHeight - 55);
+    std::string floor = "Floor: " + std::string(onFloor2 ? "2" : "1");
+    for (char c : floor) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    
     // FPS
     glColor3f(1.0f, 1.0f, 1.0f);
-    glRasterPos2f(WINDOW_WIDTH - 80, 20);
+    glRasterPos2f(windowWidth - 80, 20);
     std::string fpsStr = "FPS: " + std::to_string(fps);
     for (char c : fpsStr) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
     
     // Pause indicator
     if (isPaused) {
         glColor3f(1.0f, 0.2f, 0.2f);
-        glRasterPos2f(WINDOW_WIDTH/2 - 50, WINDOW_HEIGHT/2);
+        glRasterPos2f(windowWidth/2 - 50, windowHeight/2);
         std::string pause = "PAUSED";
         for (char c : pause) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
     }
@@ -186,7 +165,7 @@ void renderMenu() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -198,38 +177,41 @@ void renderMenu() {
     glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
     glBegin(GL_QUADS);
     glVertex2f(10, 10);
-    glVertex2f(200, 10);
-    glVertex2f(200, 130);
-    glVertex2f(10, 130);
+    glVertex2f(210, 10);
+    glVertex2f(210, 150);
+    glVertex2f(10, 150);
     glEnd();
     
     glColor3f(0.8f, 0.8f, 0.8f);
-    glRasterPos2f(15, 120);
+    glRasterPos2f(15, 140);
     std::string controls = "CONTROLS:";
     for (char c : controls) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
     
     glColor3f(0.6f, 0.6f, 0.6f);
-    glRasterPos2f(15, 105);
+    glRasterPos2f(15, 125);
     std::string w = "WASD - Move";
     for (char c : w) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 90);
+    glRasterPos2f(15, 110);
     std::string m = "Mouse - Look";
     for (char c : m) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 75);
-    std::string e = "E - Enter/Exit Museum";
+    glRasterPos2f(15, 95);
+    std::string e = "E - Enter/Exit";
     for (char c : e) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 60);
-    std::string q = "Q - Exit (Interior)";
-    for (char c : q) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 45);
-    std::string a = "A - Auto Tour";
-    for (char c : a) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 30);
+    glRasterPos2f(15, 80);
     std::string t = "T - Night Mode";
     for (char c : t) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
-    glRasterPos2f(15, 15);
-    std::string sp = "Space - Celebration!";
+    glRasterPos2f(15, 65);
+    std::string sp = "Space - Celebrate!";
     for (char c : sp) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    glRasterPos2f(15, 50);
+    std::string b = "B - Floor 2";
+    for (char c : b) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    glRasterPos2f(15, 35);
+    std::string m2 = "M - Sound";
+    for (char c : m2) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
+    glRasterPos2f(15, 20);
+    std::string h = "H - Help";
+    for (char c : h) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, c);
     
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
@@ -240,60 +222,58 @@ void renderMenu() {
     glMatrixMode(GL_MODELVIEW);
 }
 
-// ==================== UPDATE SCENE ====================
-
-// main.cpp - Tambahkan di bagian updateScene()
+void renderScene() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    
+    setupCamera();
+    setupLighting();
+    
+    if (currentScene == 0) {
+        renderExterior();
+    } else {
+        renderInterior();
+        if (onFloor2) {
+            renderFloor2();
+        }
+    }
+    
+    renderAnimations();
+    renderUI();
+    renderHUD();
+    renderMenu();
+    
+    glutSwapBuffers();
+}
 
 void updateScene() {
     if (isPaused) return;
     
     // Handle continuous key presses
-    if (keys['w'] || keys['W']) moveCamera(FORWARD, deltaTime);
-    if (keys['s'] || keys['S']) moveCamera(BACKWARD, deltaTime);
-    if (keys['a']) moveCamera(LEFT, deltaTime);
-    if (keys['d']) moveCamera(RIGHT, deltaTime);
+    if (keys['w'] || keys['W']) {
+        moveCamera(FORWARD, deltaTime);
+    }
+    if (keys['s'] || keys['S']) {
+        moveCamera(BACKWARD, deltaTime);
+    }
+    if (keys['a']) {
+        moveCamera(LEFT, deltaTime);
+    }
+    if (keys['d']) {
+        moveCamera(RIGHT, deltaTime);
+    }
     
-    // ===== UPDATE ANIMASI PINTU =====
     updateDoorAnimation(deltaTime);
-    
-    // ===== CEK JIKA PLAYER DEKAT DENGAN PINTU DAN PINTU TERBUKA =====
-    // Jika pintu terbuka dan player di depan pintu, bisa masuk
-    // (Optional: Auto-enter jika pintu terbuka dan player mendekat)
-    
     updateAnimations(deltaTime);
     updateInteractions(deltaTime);
     updateCamera(deltaTime);
     updateLighting(deltaTime);
+    updateUI(deltaTime);
 }
-
-// ==================== TIMER & IDLE ====================
-
-void timer(int value) {
-    int currentTime = glutGet(GLUT_ELAPSED_TIME);
-    deltaTime = (currentTime - lastTime) / 1000.0f;
-    if (deltaTime > 0.05f) deltaTime = 0.05f;
-    lastTime = currentTime;
-    
-    frameCount++;
-    fpsTimer += deltaTime;
-    if (fpsTimer >= 1.0f) {
-        fps = frameCount;
-        frameCount = 0;
-        fpsTimer = 0;
-    }
-    
-    updateScene();
-    glutPostRedisplay();
-    glutTimerFunc(16, timer, 0);
-}
-
-void idle() {
-    glutPostRedisplay();
-}
-
-// ==================== CALLBACK FUNGSI ====================
 
 void reshape(int w, int h) {
+    windowWidth = w;
+    windowHeight = h;
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -334,20 +314,12 @@ void keyboardDown(unsigned char key, int x, int y) {
             
         case 'e':
         case 'E':
-            // ===== LOGIKA PINTU DAN MASUK MUSEUM =====
             if (currentScene == 0) {
-                // Di EXTERIOR - Buka/Tutup pintu
-                toggleDoor();
-                if (doorOpen) {
-                    std::cout << ">>> Door is OPEN! Press E again to enter..." << std::endl;
-                } else {
-                    std::cout << ">>> Door is CLOSED!" << std::endl;
-                }
+                currentScene = 1;
+                std::cout << ">>> Entering Museum..." << std::endl;
+                resetCamera();
             } else {
-                // Di INTERIOR - Keluar museum
                 currentScene = 0;
-                doorOpen = false;
-                doorAnimation = 0.0f;
                 std::cout << ">>> Exiting Museum..." << std::endl;
                 resetCamera();
             }
@@ -357,8 +329,6 @@ void keyboardDown(unsigned char key, int x, int y) {
         case 'Q':
             if (currentScene == 1) {
                 currentScene = 0;
-                doorOpen = false;
-                doorAnimation = 0.0f;
                 std::cout << ">>> Exiting Museum..." << std::endl;
                 resetCamera();
             }
@@ -388,6 +358,23 @@ void keyboardDown(unsigned char key, int x, int y) {
         case 'f':
         case 'F':
             glutFullScreen();
+            break;
+            
+        case 'm':
+        case 'M':
+            toggleSound();
+            showNotification(isSoundEnabled() ? "Sound ON" : "Sound OFF", 1.5f);
+            break;
+            
+        case 'v':
+        case 'V':
+            toggleSettings();
+            break;
+            
+        case 'b':
+        case 'B':
+            onFloor2 = !onFloor2;
+            showNotification(onFloor2 ? "Floor 2" : "Floor 1", 1.5f);
             break;
             
         default:
@@ -450,6 +437,37 @@ void motion(int x, int y) {
     handleMouseMotion(x, y);
 }
 
+void timer(int value) {
+    int currentTime = glutGet(GLUT_ELAPSED_TIME);
+    deltaTime = (currentTime - lastTime) / 1000.0f;
+    if (deltaTime > 0.05f) deltaTime = 0.05f;
+    lastTime = currentTime;
+    
+    frameCount++;
+    fpsTimer += deltaTime;
+    if (fpsTimer >= 1.0f) {
+        fps = frameCount;
+        frameCount = 0;
+        fpsTimer = 0;
+    }
+    
+    updateScene();
+    glutPostRedisplay();
+    glutTimerFunc(16, timer, 0);
+}
+
+void idle() {
+    glutPostRedisplay();
+}
+
+void focusOnCollection() {
+    showNotification("Focusing on collection...", 1.5f);
+}
+
+void teleportToArea(int area) {
+    showNotification("Teleported to " + std::string(areas[area]), 1.5f);
+}
+
 // ==================== MAIN ====================
 
 int main(int argc, char** argv) {
@@ -457,10 +475,15 @@ int main(int argc, char** argv) {
     
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glutCreateWindow(WINDOW_TITLE);
+    glutInitWindowSize(1024, 768);
+    glutCreateWindow("MUSEUM VIRTUAL 3D CR7 - MADEIRA");
     
     initGL();
+    initSound();
+    initUI();
+    initFloor2();
+    playBackgroundMusic();
+    showNotification("Welcome to Museum CR7 - Madeira!", 3.0f);
     
     glutDisplayFunc(renderScene);
     glutReshapeFunc(reshape);
