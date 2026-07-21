@@ -88,6 +88,10 @@ void initGL() {
 
 // ==================== RENDER UTAMA ====================
 
+// main.cpp - Di bagian atas
+#include "museum_layout.h"  // Pastikan ini sudah ada
+
+// Di dalam renderScene(), pastikan currentScene berfungsi:
 void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -238,6 +242,8 @@ void renderMenu() {
 
 // ==================== UPDATE SCENE ====================
 
+// main.cpp - Tambahkan di bagian updateScene()
+
 void updateScene() {
     if (isPaused) return;
     
@@ -246,6 +252,13 @@ void updateScene() {
     if (keys['s'] || keys['S']) moveCamera(BACKWARD, deltaTime);
     if (keys['a']) moveCamera(LEFT, deltaTime);
     if (keys['d']) moveCamera(RIGHT, deltaTime);
+    
+    // ===== UPDATE ANIMASI PINTU =====
+    updateDoorAnimation(deltaTime);
+    
+    // ===== CEK JIKA PLAYER DEKAT DENGAN PINTU DAN PINTU TERBUKA =====
+    // Jika pintu terbuka dan player di depan pintu, bisa masuk
+    // (Optional: Auto-enter jika pintu terbuka dan player mendekat)
     
     updateAnimations(deltaTime);
     updateInteractions(deltaTime);
@@ -321,13 +334,20 @@ void keyboardDown(unsigned char key, int x, int y) {
             
         case 'e':
         case 'E':
+            // ===== LOGIKA PINTU DAN MASUK MUSEUM =====
             if (currentScene == 0) {
-                currentScene = 1;
-                std::cout << ">>> Entering Museum..." << std::endl;
-                // Reset posisi di dalam
-                resetCamera();
+                // Di EXTERIOR - Buka/Tutup pintu
+                toggleDoor();
+                if (doorOpen) {
+                    std::cout << ">>> Door is OPEN! Press E again to enter..." << std::endl;
+                } else {
+                    std::cout << ">>> Door is CLOSED!" << std::endl;
+                }
             } else {
+                // Di INTERIOR - Keluar museum
                 currentScene = 0;
+                doorOpen = false;
+                doorAnimation = 0.0f;
                 std::cout << ">>> Exiting Museum..." << std::endl;
                 resetCamera();
             }
@@ -337,6 +357,8 @@ void keyboardDown(unsigned char key, int x, int y) {
         case 'Q':
             if (currentScene == 1) {
                 currentScene = 0;
+                doorOpen = false;
+                doorAnimation = 0.0f;
                 std::cout << ">>> Exiting Museum..." << std::endl;
                 resetCamera();
             }

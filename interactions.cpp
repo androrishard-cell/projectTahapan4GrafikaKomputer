@@ -118,19 +118,36 @@ void handleMouseClick(int button, int state, int x, int y) {
     }
 }
 
+// ===== PERBAIKAN: MOUSE MOTION =====
 void handleMouseMotion(int x, int y) {
     static int lastX = -1, lastY = -1;
-    if (lastX == -1) { lastX = x; lastY = y; return; }
     
+    // Inisialisasi pertama
+    if (lastX == -1) { 
+        lastX = x; 
+        lastY = y; 
+        return; 
+    }
+    
+    // Hitung pergerakan mouse
+    // dx > 0 = mouse ke kanan, dx < 0 = mouse ke kiri
+    // dy > 0 = mouse ke bawah, dy < 0 = mouse ke atas
     int dx = x - lastX;
     int dy = y - lastY;
+    
+    // Update posisi terakhir
     lastX = x;
     lastY = y;
     
-    rotateCamera(dx, dy);
+    // Rotasi kamera
+    // dx positif (mouse kanan) -> view ke kanan
+    // dy positif (mouse bawah) -> view ke bawah
+    rotateCamera((float)dx, (float)dy);
 }
 
-void updateInteractions(float deltaTime) {}
+void updateInteractions(float deltaTime) {
+    // Update jika diperlukan
+}
 
 void showHelp() {
     std::cout << "\n========================================" << std::endl;
@@ -138,7 +155,7 @@ void showHelp() {
     std::cout << "========================================" << std::endl;
     std::cout << "  CONTROLS:" << std::endl;
     std::cout << "  WASD    - Move camera" << std::endl;
-    std::cout << "  Mouse   - Look around" << std::endl;
+    std::cout << "  Mouse   - Look around (right=right, left=left)" << std::endl;
     std::cout << "  1       - First Person Camera" << std::endl;
     std::cout << "  2       - Orbit Camera" << std::endl;
     std::cout << "  3       - Free Fly Camera" << std::endl;
@@ -160,4 +177,6 @@ void togglePause() {
     std::cout << "Game: " << (gamePaused ? "PAUSED" : "RESUMED") << std::endl;
 }
 
-bool isGamePaused() { return gamePaused; }
+bool isGamePaused() { 
+    return gamePaused; 
+}

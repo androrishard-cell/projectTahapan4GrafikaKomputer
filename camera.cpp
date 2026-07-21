@@ -22,7 +22,7 @@ static struct {
 void initCamera() {
     camera.eyeX = 0.0f;
     camera.eyeY = 2.0f;
-    camera.eyeZ = 15.0f;
+    camera.eyeZ = 18.0f;
     camera.centerX = 0.0f;
     camera.centerY = 1.0f;
     camera.centerZ = 0.0f;
@@ -31,7 +31,7 @@ void initCamera() {
     camera.upZ = 0.0f;
     camera.yaw = 0.0f;
     camera.pitch = 0.0f;
-    camera.radius = 15.0f;
+    camera.radius = 18.0f;
     camera.mode = CAM_FIRST_PERSON;
     camera.speed = 3.0f;
     camera.mouseSensitivity = 0.15f;
@@ -66,16 +66,24 @@ void updateCamera(float deltaTime) {
 void setCameraMode(int mode) {
     camera.mode = mode;
     if (mode == CAM_ORBIT) {
-        // Hitung jarak ke center
         camera.radius = sqrt(pow(camera.eyeX - camera.centerX, 2) + 
                             pow(camera.eyeY - camera.centerY, 2) + 
                             pow(camera.eyeZ - camera.centerZ, 2));
     }
+    std::cout << "Camera Mode: " << getCameraModeString() << std::endl;
 }
 
-void setCameraModeFirstPerson() { setCameraMode(CAM_FIRST_PERSON); }
-void setCameraModeOrbit() { setCameraMode(CAM_ORBIT); }
-void setCameraModeFreeFly() { setCameraMode(CAM_FREE_FLY); }
+void setCameraModeFirstPerson() { 
+    setCameraMode(CAM_FIRST_PERSON); 
+}
+
+void setCameraModeOrbit() { 
+    setCameraMode(CAM_ORBIT); 
+}
+
+void setCameraModeFreeFly() { 
+    setCameraMode(CAM_FREE_FLY); 
+}
 
 void moveCamera(int direction, float speed) {
     if (speed <= 0) speed = camera.speed;
@@ -121,7 +129,6 @@ void moveCamera(int direction, float speed) {
             break;
     }
     
-    // Check collision
     checkCollisions(&newX, &newY, &newZ);
     
     camera.eyeX = newX;
@@ -131,23 +138,33 @@ void moveCamera(int direction, float speed) {
     updateCamera(0);
 }
 
+// ===== PERBAIKAN UTAMA: MOUSE CONTROL =====
+// Mouse ke KANAN = View ke KANAN
+// Mouse ke KIRI = View ke KIRI
 void rotateCamera(float dx, float dy) {
     float sens = camera.mouseSensitivity;
-    camera.yaw += dx * sens;
-    camera.pitch -= dy * sens;
     
+    // ===== HORIZONTAL =====
+    // dx > 0 (mouse ke kanan) -> yaw positif (view ke kanan)
+    // dx < 0 (mouse ke kiri) -> yaw negatif (view ke kiri)
+    camera.yaw += dx * sens;  // <-- PASTIKAN INI + (TANDA PLUS)
+    
+    // ===== VERTIKAL =====
+    // dy > 0 (mouse ke bawah) -> pitch negatif (view ke bawah)
+    // dy < 0 (mouse ke atas) -> pitch positif (view ke atas)
+    camera.pitch -= dy * sens;  // <-- PASTIKAN INI - (TANDA MINUS)
+    
+    // Clamp pitch agar tidak terbalik
     if (camera.pitch > 89.0f) camera.pitch = 89.0f;
     if (camera.pitch < -89.0f) camera.pitch = -89.0f;
     
     updateCamera(0);
 }
 
-// camera.cpp - Bagian resetCamera
 void resetCamera() {
-    // Posisi awal di luar museum (depan museum)
     camera.eyeX = 0.0f;
     camera.eyeY = 2.0f;
-    camera.eyeZ = 18.0f;  // Jarak dari museum
+    camera.eyeZ = 18.0f;
     camera.centerX = 0.0f;
     camera.centerY = 1.0f;
     camera.centerZ = 0.0f;
@@ -155,9 +172,12 @@ void resetCamera() {
     camera.pitch = 0.0f;
     camera.radius = 18.0f;
     updateCamera(0);
+    std::cout << "Camera Reset" << std::endl;
 }
 
-int getCurrentCameraMode() { return camera.mode; }
+int getCurrentCameraMode() { 
+    return camera.mode; 
+}
 
 std::string getCameraModeString() {
     switch (camera.mode) {

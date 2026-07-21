@@ -24,8 +24,14 @@
 #define TEXTURE_TIMELINE 16
 #define TEXTURE_PHOTO 17
 #define TEXTURE_PANEL 18
+#define TEXTURE_JERSEY_MU 19      // BARU
+#define TEXTURE_JERSEY_RM 20      // BARU
+#define TEXTURE_JERSEY_JUVE 21    // BARU
+#define TEXTURE_JERSEY_PORTUGAL 22 // BARU
+#define TEXTURE_PAVEMENT 23       // BARU
 
 extern void initTextures();
 extern void bindTexture(int id);
+extern void loadTextureFromFile(const char* filename, int id);
 
 #endif
